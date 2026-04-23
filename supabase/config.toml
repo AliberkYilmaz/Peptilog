@@ -1,0 +1,40 @@
+# Supabase local dev config — used by `supabase start`
+# Docs: https://supabase.com/docs/reference/cli/config
+
+[api]
+port = 54321
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+port = 54323
+
+[auth]
+site_url = "com.peptilog.app://auth/callback"
+# OAuth redirect URLs (add per provider below)
+additional_redirect_urls = [
+  "com.peptilog.app://auth/callback",
+  "http://localhost:3000/auth/callback",
+]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false
+
+[auth.external.apple]
+enabled = true
+client_id = "com.peptilog.app"        # Your Apple Service ID
+secret = "env(APPLE_SECRET)"          # PKCS#8 private key
+
+[auth.external.google]
+enabled = true
+client_id = "env(GOOGLE_CLIENT_ID)"
+secret = "env(GOOGLE_CLIENT_SECRET)"
+
+[storage]
+file_size_limit = "10MiB"
