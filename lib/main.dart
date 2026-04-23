@@ -28,15 +28,16 @@ Future<void> main() async {
   }, appRunner: () => runApp(const ProviderScope(child: PeptilogApp())));
 }
 
-class PeptilogApp extends StatelessWidget {
+class PeptilogApp extends ConsumerWidget {
   const PeptilogApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(appRouterProvider);
     return MaterialApp.router(
       title: AppConstants.appName,
       theme: AppTheme.dark,
-      routerConfig: appRouter,
+      routerConfig: router,
       debugShowCheckedModeBanner: false,
     );
   }

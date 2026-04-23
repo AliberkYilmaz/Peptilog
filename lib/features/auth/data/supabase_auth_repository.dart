@@ -1,4 +1,4 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthUser;
 
 import '../domain/auth_user.dart';
 import 'auth_repository.dart';
@@ -10,8 +10,8 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Stream<AuthUser?> get authStateChanges => _client.auth.onAuthStateChange.map(
-        (event) => _mapUser(event.session?.user),
-      );
+    (event) => _mapUser(event.session?.user),
+  );
 
   @override
   AuthUser? get currentUser => _mapUser(_client.auth.currentUser);

@@ -4,18 +4,59 @@
   "@appName": {
     "description": "The name of the application"
   },
-  "loginTitle": "Welcome back",
-  "@loginTitle": {
-    "description": "Login screen title"
-  },
-  "registerTitle": "Create account",
-  "@registerTitle": {
-    "description": "Register screen title"
-  },
-  "emailLabel": "Email",
-  "passwordLabel": "Password",
-  "loginButton": "Sign in",
-  "registerButton": "Create account",
-  "logoutButton": "Sign out",
-  "dashboardTitle": "Today"
+
+  "onboardingSlide1Title": "Track your peptides",
+  "onboardingSlide1Body": "Log every injection with dose, compound, and site. Your protocol, perfectly recorded.",
+  "onboardingSlide2Title": "Monitor your progress",
+  "onboardingSlide2Body": "Chart weight trends, body metrics, and health markers over time — all in one place.",
+  "onboardingSlide3Title": "Private by design",
+  "onboardingSlide3Body": "Your data stays on-device first. End-to-end encrypted sync. PIN and biometric lock.",
+  "onboardingSkip": "Skip",
+  "onboardingNext": "Next",
+  "onboardingGetStarted": "Get started",
+
+  "signInTitle": "Welcome back",
+  "signInContinueWithApple": "Continue with Apple",
+  "signInContinueWithGoogle": "Continue with Google",
+  "signInOr": "or",
+  "signInEmailLabel": "Email",
+  "signInPasswordLabel": "Password",
+  "signInButton": "Sign in",
+  "signInForgotPassword": "Forgot password?",
+  "signInNoAccount": "Don't have an account?",
+  "signInGoSignUp": "Sign up",
+
+  "signUpTitle": "Create account",
+  "signUpSubtitle": "Start tracking your peptide journey.",
+  "signUpEmailLabel": "Email",
+  "signUpPasswordLabel": "Password",
+  "signUpConfirmPasswordLabel": "Confirm password",
+  "signUpButton": "Create account",
+  "signUpAlreadyHaveAccount": "Already have an account?",
+  "signUpGoSignIn": "Sign in",
+  "signUpPasswordTooShort": "Password must be at least 8 characters",
+  "signUpPasswordsDoNotMatch": "Passwords do not match",
+
+  "pinSetupTitle": "Set your PIN",
+  "pinSetupSubtitle": "Choose a 6-digit PIN to secure the app",
+  "pinConfirmTitle": "Confirm your PIN",
+  "pinConfirmSubtitle": "Enter the same PIN again",
+  "pinEntryTitle": "Enter your PIN",
+  "pinMismatchError": "PINs did not match — try again",
+  "pinIncorrectError": "Incorrect PIN — try again",
+
+  "biometricUnlockReason": "Unlock Peptilog",
+
+  "gdprTitle": "Your privacy matters",
+  "gdprBody": "Peptilog stores health data about peptide injections and body metrics. Before you continue, please review how we handle your information.",
+  "gdprBullet1": "Data is stored locally on your device first.",
+  "gdprBullet2": "Optional encrypted sync to our secure cloud (Supabase).",
+  "gdprBullet3": "We never sell or share your data with third parties.",
+  "gdprBullet4": "You can delete your account and all data at any time.",
+  "gdprDisclaimer": "This app is not a medical device. Do not use it as a substitute for professional medical advice. Always consult a qualified healthcare provider before beginning or modifying any peptide protocol.",
+  "gdprAcceptButton": "I understand — continue",
+  "gdprPrivacyPolicy": "Read our full Privacy Policy",
+
+  "dashboardTitle": "Today",
+  "logoutButton": "Sign out"
 }
