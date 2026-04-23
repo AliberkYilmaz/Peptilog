@@ -1,0 +1,21 @@
+{
+  "@@locale": "en",
+  "appName": "Peptilog",
+  "@appName": {
+    "description": "The name of the application"
+  },
+  "loginTitle": "Welcome back",
+  "@loginTitle": {
+    "description": "Login screen title"
+  },
+  "registerTitle": "Create account",
+  "@registerTitle": {
+    "description": "Register screen title"
+  },
+  "emailLabel": "Email",
+  "passwordLabel": "Password",
+  "loginButton": "Sign in",
+  "registerButton": "Create account",
+  "logoutButton": "Sign out",
+  "dashboardTitle": "Today"
+}

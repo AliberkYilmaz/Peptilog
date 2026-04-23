@@ -1,0 +1,66 @@
+name: peptilog_app
+description: "Peptilog — mobile app for tracking peptide injections, weight, and health metrics."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # Local database
+  isar: ^3.1.0
+  isar_flutter_libs: ^3.1.0
+  path_provider: ^2.1.5
+
+  # Cloud backend
+  supabase_flutter: ^2.9.0
+
+  # Navigation
+  go_router: ^15.0.0
+
+  # UI / Charts
+  fl_chart: ^0.71.0
+  table_calendar: ^3.2.0
+  google_fonts: ^6.2.1
+  cupertino_icons: ^1.0.8
+
+  # Security
+  local_auth: ^2.3.0
+  flutter_secure_storage: ^9.2.4
+
+  # Monitoring
+  sentry_flutter: ^8.14.0
+
+  # Utilities
+  intl: ^0.20.2
+  uuid: ^4.5.1
+  freezed_annotation: ^3.0.0
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+  # Code generation
+  # Note: isar_generator (source_gen ^1.x) conflicts with riverpod_generator (source_gen ^2.x)
+  # Use separate pub runs: riverpod/freezed gen and isar gen must not share the same pub resolve.
+  # For now isar_generator is pinned to be run via a separate build_runner invocation.
+  build_runner: ^2.4.15
+  riverpod_generator: ^2.6.5
+  freezed: ^3.0.0
+  json_serializable: ^6.9.2
+
+flutter:
+  uses-material-design: true
+  generate: true
