@@ -16,6 +16,7 @@ import '../../features/health/data/blood_pressure_log_repository.dart'
 import '../../features/health/data/isar_blood_pressure_log_repository.dart';
 import '../../features/reminders/data/reminder_repository.dart';
 import '../../features/reminders/data/isar_reminder_repository.dart';
+import 'sync_providers.dart';
 
 /// The Isar database instance. Must be overridden in ProviderScope
 /// after [IsarDatabase.open()] resolves at app startup.
@@ -26,27 +27,48 @@ final isarProvider = Provider<Isar>((ref) {
 });
 
 final peptideRepositoryProvider = Provider<PeptideRepository>((ref) {
-  return IsarPeptideRepository(ref.watch(isarProvider));
+  final onMutated = ref.read(syncControllerProvider).onRecordWritten;
+  return IsarPeptideRepository(ref.watch(isarProvider), onMutated: onMutated);
 });
 
 final injectionLogRepositoryProvider = Provider<InjectionLogRepository>((ref) {
-  return IsarInjectionLogRepository(ref.watch(isarProvider));
+  final onMutated = ref.read(syncControllerProvider).onRecordWritten;
+  return IsarInjectionLogRepository(
+    ref.watch(isarProvider),
+    onMutated: onMutated,
+  );
 });
 
 final weightLogRepositoryProvider = Provider<WeightLogRepository>((ref) {
-  return IsarWeightLogRepository(ref.watch(isarProvider));
+  final onMutated = ref.read(syncControllerProvider).onRecordWritten;
+  return IsarWeightLogRepository(
+    ref.watch(isarProvider),
+    onMutated: onMutated,
+  );
 });
 
 final sleepLogRepositoryProvider = Provider<SleepLogRepository>((ref) {
-  return IsarSleepLogRepository(ref.watch(isarProvider));
+  final onMutated = ref.read(syncControllerProvider).onRecordWritten;
+  return IsarSleepLogRepository(
+    ref.watch(isarProvider),
+    onMutated: onMutated,
+  );
 });
 
 final bloodPressureLogRepositoryProvider = Provider<BloodPressureLogRepository>(
   (ref) {
-    return IsarBloodPressureLogRepository(ref.watch(isarProvider));
+    final onMutated = ref.read(syncControllerProvider).onRecordWritten;
+    return IsarBloodPressureLogRepository(
+      ref.watch(isarProvider),
+      onMutated: onMutated,
+    );
   },
 );
 
 final reminderRepositoryProvider = Provider<ReminderRepository>((ref) {
-  return IsarReminderRepository(ref.watch(isarProvider));
+  final onMutated = ref.read(syncControllerProvider).onRecordWritten;
+  return IsarReminderRepository(
+    ref.watch(isarProvider),
+    onMutated: onMutated,
+  );
 });

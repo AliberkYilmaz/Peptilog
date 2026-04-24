@@ -5,7 +5,10 @@ import 'injection_log_repository.dart';
 
 class IsarInjectionLogRepository implements InjectionLogRepository {
   final Isar _isar;
-  const IsarInjectionLogRepository(this._isar);
+  final void Function()? _onMutated;
+
+  const IsarInjectionLogRepository(this._isar, {void Function()? onMutated})
+      : _onMutated = onMutated;
 
   @override
   Future<List<InjectionLog>> getAll() =>
@@ -34,8 +37,11 @@ class IsarInjectionLogRepository implements InjectionLogRepository {
   Future<InjectionLog?> getById(int id) => _isar.injectionLogs.get(id);
 
   @override
-  Future<int> save(InjectionLog log) =>
-      _isar.writeTxn(() => _isar.injectionLogs.put(log));
+  Future<int> save(InjectionLog log) async {
+    final result = await _isar.writeTxn(() => _isar.injectionLogs.put(log));
+    _onMutated?.call();
+    return result;
+  }
 
   @override
   Future<void> softDelete(int id) async {
@@ -47,6 +53,7 @@ class IsarInjectionLogRepository implements InjectionLogRepository {
         await _isar.injectionLogs.put(log);
       }
     });
+    _onMutated?.call();
   }
 
   @override

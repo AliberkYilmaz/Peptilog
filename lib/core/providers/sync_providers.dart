@@ -8,7 +8,9 @@ import '../../features/injection_log/data/supabase_injection_log_repository.dart
 import '../../features/peptides/data/supabase_peptide_repository.dart';
 import '../../features/reminders/data/supabase_reminder_repository.dart';
 import '../../features/weight/data/supabase_weight_log_repository.dart';
+import '../sync/sync_controller.dart';
 import '../sync/sync_service.dart';
+import 'connectivity_providers.dart';
 import 'database_providers.dart';
 
 /// SharedPreferences instance — must be overridden in ProviderScope after init.
@@ -58,5 +60,14 @@ final syncServiceProvider = Provider<SyncService>((ref) {
     sleepLogRepo: ref.watch(_supabaseSleepLogRepoProvider),
     bloodPressureLogRepo: ref.watch(_supabaseBloodPressureLogRepoProvider),
     reminderRepo: ref.watch(_supabaseReminderRepoProvider),
+  );
+});
+
+final syncControllerProvider = Provider<SyncController>((ref) {
+  final service = ref.watch(syncServiceProvider);
+  final connectivityService = ref.watch(connectivityServiceProvider);
+  return SyncController(
+    syncService: service,
+    onlineStream: connectivityService.onlineStream,
   );
 });

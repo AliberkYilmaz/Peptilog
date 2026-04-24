@@ -4,8 +4,11 @@ import '../domain/blood_pressure_log.dart';
 import 'blood_pressure_log_repository.dart';
 
 class IsarBloodPressureLogRepository implements BloodPressureLogRepository {
-  const IsarBloodPressureLogRepository(this._isar);
   final Isar _isar;
+  final void Function()? _onMutated;
+
+  const IsarBloodPressureLogRepository(this._isar, {void Function()? onMutated})
+      : _onMutated = onMutated;
 
   @override
   Future<List<BloodPressureLog>> getAll() =>
@@ -15,9 +18,12 @@ class IsarBloodPressureLogRepository implements BloodPressureLogRepository {
   Future<BloodPressureLog?> getById(int id) => _isar.bloodPressureLogs.get(id);
 
   @override
-  Future<int> save(BloodPressureLog log) {
+  Future<int> save(BloodPressureLog log) async {
     log.updatedAt = DateTime.now();
-    return _isar.writeTxn(() => _isar.bloodPressureLogs.put(log));
+    final result =
+        await _isar.writeTxn(() => _isar.bloodPressureLogs.put(log));
+    _onMutated?.call();
+    return result;
   }
 
   @override
@@ -31,6 +37,7 @@ class IsarBloodPressureLogRepository implements BloodPressureLogRepository {
         await _isar.bloodPressureLogs.put(log);
       }
     });
+    _onMutated?.call();
   }
 
   @override
