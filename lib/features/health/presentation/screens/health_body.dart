@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../domain/blood_pressure_log.dart';
+import '../../domain/sleep_log.dart';
 import '../providers/health_providers.dart';
 import '../widgets/blood_pressure_chart.dart';
 import '../widgets/blood_pressure_entry_form.dart';
@@ -11,23 +14,79 @@ import '../widgets/sleep_entry_form.dart';
 
 /// Health tab — tab index 3 in the main bottom nav.
 ///
-/// Layout (top → bottom):
-///   • Sleep section: hero hours display, 30-day chart, entry form
-///   • Blood pressure section: hero SYS/DIA display, 30-day chart, entry form
+/// Layout:
+///   • SegmentedButton: Sleep | Blood Pressure
+///   • Sleep section (tab 0): hero hours display, 30-day chart, entry form
+///   • Blood Pressure section (tab 1): hero SYS/DIA display, 30-day chart, entry form
 class HealthBody extends ConsumerWidget {
   const HealthBody({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final selectedTab = ref.watch(selectedHealthTabProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // ── Segmented control ───────────────────────────────────────────────
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: SegmentedButton<int>(
+            segments: [
+              ButtonSegment<int>(
+                value: 0,
+                label: Text(l10n.healthTabSleep),
+                icon: const Icon(Icons.bedtime_outlined, size: 16),
+              ),
+              ButtonSegment<int>(
+                value: 1,
+                label: Text(l10n.healthTabBloodPressure),
+                icon: const Icon(Icons.favorite_outline, size: 16),
+              ),
+            ],
+            selected: {selectedTab},
+            onSelectionChanged: (Set<int> newSelection) {
+              ref.read(selectedHealthTabProvider.notifier).state =
+                  newSelection.first;
+            },
+            style: ButtonStyle(
+              textStyle: WidgetStatePropertyAll(
+                GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500),
+              ),
+            ),
+          ),
+        ),
+
+        // ── Tab content ─────────────────────────────────────────────────────
+        Expanded(
+          child: IndexedStack(
+            index: selectedTab,
+            children: const [_SleepSection(), _BloodPressureSection()],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Sleep section
+// ---------------------------------------------------------------------------
+
+class _SleepSection extends ConsumerWidget {
+  const _SleepSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final SleepLog? latest = ref.watch(latestSleepProvider);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ── Sleep ──────────────────────────────────────────────────────────
-          _SectionHeader(label: 'Sleep', icon: Icons.bedtime_outlined),
-          const SizedBox(height: 12),
-          const _SleepHeroDisplay(),
+          _SleepHeroDisplay(latest: latest),
           const SizedBox(height: 16),
           const SleepChart(),
           const SizedBox(height: 8),
@@ -38,34 +97,6 @@ class HealthBody extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           const SleepEntryForm(),
-
-          const SizedBox(height: 32),
-          const Divider(color: AppTheme.divider),
-          const SizedBox(height: 24),
-
-          // ── Blood Pressure ─────────────────────────────────────────────────
-          _SectionHeader(label: 'Blood Pressure', icon: Icons.favorite_outline),
-          const SizedBox(height: 12),
-          const _BpHeroDisplay(),
-          const SizedBox(height: 16),
-          const BloodPressureChart(),
-          const SizedBox(height: 8),
-          _ChartLegend(
-            items: const [
-              _LegendItem(color: AppTheme.amber, label: 'Systolic'),
-              _LegendItem(
-                color: Color(0xFFBF8C40), // amber ~60%
-                label: 'Diastolic',
-              ),
-              _LegendItem(
-                color: Color(0x4CE8A84C), // amber ~30%
-                label: 'Normal range',
-                dashed: true,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          const BloodPressureEntryForm(),
           const SizedBox(height: 32),
         ],
       ),
@@ -73,51 +104,18 @@ class HealthBody extends ConsumerWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Section header
-// ---------------------------------------------------------------------------
+class _SleepHeroDisplay extends StatelessWidget {
+  const _SleepHeroDisplay({this.latest});
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.label, required this.icon});
-
-  final String label;
-  final IconData icon;
+  final SleepLog? latest;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
-        Icon(icon, size: 18, color: AppTheme.amber),
-        const SizedBox(width: 8),
-        Text(
-          label,
-          style: GoogleFonts.playfairDisplay(
-            color: AppTheme.onBackground,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Sleep hero
-// ---------------------------------------------------------------------------
-
-class _SleepHeroDisplay extends ConsumerWidget {
-  const _SleepHeroDisplay();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final latest = ref.watch(latestSleepProvider);
-
-    return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          latest != null ? latest.hours.toStringAsFixed(1) : '--',
+          latest != null ? latest!.hours.toStringAsFixed(1) : '--',
           style: GoogleFonts.playfairDisplay(
             color: AppTheme.onBackground,
             fontSize: 48,
@@ -160,17 +158,54 @@ class _SleepHeroDisplay extends ConsumerWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Blood pressure hero
+// Blood Pressure section
 // ---------------------------------------------------------------------------
 
-class _BpHeroDisplay extends ConsumerWidget {
-  const _BpHeroDisplay();
+class _BloodPressureSection extends ConsumerWidget {
+  const _BloodPressureSection();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final latest = ref.watch(latestBloodPressureProvider);
+    final BloodPressureLog? latest = ref.watch(latestBloodPressureProvider);
 
-    if (latest == null) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _BpHeroDisplay(latest: latest),
+          const SizedBox(height: 16),
+          const BloodPressureChart(),
+          const SizedBox(height: 8),
+          _ChartLegend(
+            items: const [
+              _LegendItem(color: AppTheme.amber, label: 'Systolic'),
+              _LegendItem(color: Color(0xFFBF8C40), label: 'Diastolic'),
+              _LegendItem(
+                color: Color(0x4CE8A84C),
+                label: 'Normal range',
+                dashed: true,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          const BloodPressureEntryForm(),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+}
+
+class _BpHeroDisplay extends StatelessWidget {
+  const _BpHeroDisplay({this.latest});
+
+  final BloodPressureLog? latest;
+
+  @override
+  Widget build(BuildContext context) {
+    final log = latest;
+    if (log == null) {
       return Text(
         '--/--',
         style: GoogleFonts.playfairDisplay(
@@ -187,7 +222,7 @@ class _BpHeroDisplay extends ConsumerWidget {
       textBaseline: TextBaseline.alphabetic,
       children: [
         Text(
-          '${latest.systolic}',
+          '${log.systolic}',
           style: GoogleFonts.playfairDisplay(
             color: AppTheme.onBackground,
             fontSize: 48,
@@ -204,7 +239,7 @@ class _BpHeroDisplay extends ConsumerWidget {
           ),
         ),
         Text(
-          '${latest.diastolic}',
+          '${log.diastolic}',
           style: GoogleFonts.playfairDisplay(
             color: AppTheme.onBackground,
             fontSize: 48,
@@ -220,10 +255,10 @@ class _BpHeroDisplay extends ConsumerWidget {
             fontSize: 14,
           ),
         ),
-        if (latest.pulse != null) ...[
+        if (log.pulse != null) ...[
           const SizedBox(width: 16),
           Text(
-            '${latest.pulse} bpm',
+            '${log.pulse} bpm',
             style: GoogleFonts.inter(
               color: AppTheme.onSurface.withAlpha(153),
               fontSize: 14,

@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/offline_banner.dart';
 import '../../../calendar/presentation/screens/calendar_body.dart';
-import '../../../injection_log/presentation/screens/quick_log_body.dart';
+import '../../../health/presentation/providers/health_providers.dart';
 import '../../../health/presentation/screens/health_body.dart';
+import '../../../injection_log/presentation/screens/quick_log_body.dart';
 import '../../../reminders/presentation/screens/profile_body.dart';
 import '../../../reminders/presentation/widgets/reminder_form_sheet.dart';
 import '../../../weight/presentation/screens/weight_body.dart';
@@ -20,9 +21,17 @@ import '../providers/dashboard_providers.dart';
 ///   3 — Health    (placeholder)
 ///   4 — Profile   (placeholder)
 class DashboardScreen extends ConsumerStatefulWidget {
-  const DashboardScreen({super.key, this.initialTab = 0});
+  const DashboardScreen({
+    super.key,
+    this.initialTab = 0,
+    this.initialHealthTab,
+  });
 
   final int initialTab;
+
+  /// When set, selects the Health sub-tab (0 = Sleep, 1 = Blood Pressure)
+  /// immediately after the widget mounts. Only relevant when initialTab == 3.
+  final int? initialHealthTab;
 
   @override
   ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
@@ -32,11 +41,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.initialTab != 0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.initialTab != 0) {
         ref.read(selectedTabProvider.notifier).state = widget.initialTab;
-      });
-    }
+      }
+      if (widget.initialHealthTab != null) {
+        ref.read(selectedHealthTabProvider.notifier).state =
+            widget.initialHealthTab!;
+      }
+    });
   }
 
   static const _titles = [

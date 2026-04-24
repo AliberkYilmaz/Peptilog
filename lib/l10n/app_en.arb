@@ -76,5 +76,8 @@
   "reminderDeleteConfirmTitle": "Delete reminder?",
   "reminderDeleteConfirmBody": "This reminder and its notifications will be removed.",
   "reminderErrorSelectPeptide": "Select a peptide",
-  "reminderErrorSelectDay": "Select at least one day"
+  "reminderErrorSelectDay": "Select at least one day",
+
+  "healthTabSleep": "Sleep",
+  "healthTabBloodPressure": "Blood Pressure"
 }

@@ -489,6 +489,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select at least one day'**
   String get reminderErrorSelectDay;
+
+  /// No description provided for @healthTabSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep'**
+  String get healthTabSleep;
+
+  /// No description provided for @healthTabBloodPressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood Pressure'**
+  String get healthTabBloodPressure;
 }
 
 class _AppLocalizationsDelegate

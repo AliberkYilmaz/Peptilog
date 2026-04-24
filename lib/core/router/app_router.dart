@@ -142,6 +142,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/calculator',
         builder: (context, state) => const CalculatorScreen(),
       ),
+      // Health tab deep-links
+      GoRoute(
+        path: '/health',
+        builder: (context, state) => const DashboardScreen(initialTab: 3),
+      ),
+      GoRoute(
+        path: '/health/sleep',
+        builder: (context, state) =>
+            const DashboardScreen(initialTab: 3, initialHealthTab: 0),
+      ),
+      GoRoute(
+        path: '/health/bp',
+        builder: (context, state) =>
+            const DashboardScreen(initialTab: 3, initialHealthTab: 1),
+      ),
     ],
   );
 });

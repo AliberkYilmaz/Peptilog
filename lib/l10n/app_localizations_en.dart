@@ -215,4 +215,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminderErrorSelectDay => 'Select at least one day';
+
+  @override
+  String get healthTabSleep => 'Sleep';
+
+  @override
+  String get healthTabBloodPressure => 'Blood Pressure';
 }
