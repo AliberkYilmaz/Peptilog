@@ -1,14 +1,13 @@
 name: isar_codegen
-description: "Separate isar codegen project to avoid source_gen conflicts."
-publish_to: none
+description: "Standalone code-gen tool for Peptilog Isar collections. Run separately to avoid source_gen version conflict with riverpod_generator."
+publish_to: 'none'
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.11.5
 
 dependencies:
   isar: ^3.1.0
-  isar_flutter_libs: ^3.1.0
 
 dev_dependencies:
-  build_runner: ^2.4.13
+  build_runner: ^2.4.0
   isar_generator: ^3.1.0

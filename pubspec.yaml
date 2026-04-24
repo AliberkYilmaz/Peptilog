@@ -53,9 +53,9 @@ dev_dependencies:
   flutter_lints: ^6.0.0
 
   # Code generation
-  # Note: isar_generator (source_gen ^1.x) conflicts with riverpod_generator (source_gen ^2.x)
-  # Use separate pub runs: riverpod/freezed gen and isar gen must not share the same pub resolve.
-  # For now isar_generator is pinned to be run via a separate build_runner invocation.
+  # isar_generator 3.x requires source_gen <2.0.0; riverpod_generator 2.x requires source_gen ^2.0.0.
+  # Resolution: isar_generator is run from tools/isar_codegen/ (separate pub env).
+  # See tools/isar_codegen/README.md and scripts/gen_isar.sh for instructions.
   build_runner: ^2.4.15
   riverpod_generator: ^2.6.5
   freezed: ^3.0.0
