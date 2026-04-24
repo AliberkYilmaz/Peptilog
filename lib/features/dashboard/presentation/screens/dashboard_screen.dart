@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/offline_banner.dart';
 import '../../../calendar/presentation/screens/calendar_body.dart';
 import '../../../injection_log/presentation/screens/quick_log_body.dart';
+import '../../../health/presentation/screens/health_body.dart';
 import '../../../reminders/presentation/screens/profile_body.dart';
 import '../../../reminders/presentation/widgets/reminder_form_sheet.dart';
 import '../../../weight/presentation/screens/weight_body.dart';
@@ -58,7 +59,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           CalendarBody(),
           QuickLogBody(),
           WeightBody(),
-          _PlaceholderTab(icon: Icons.favorite_border, label: 'Health'),
+          HealthBody(),
           ProfileBody(),
         ],
       ),
@@ -108,49 +109,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               child: const Icon(Icons.add),
             )
           : currentTab == 4
-              ? FloatingActionButton(
-                  onPressed: () => showModalBottomSheet<void>(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: AppTheme.surface,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16)),
-                    ),
-                    builder: (_) => const ReminderFormSheet(),
-                  ),
-                  backgroundColor: AppTheme.amber,
-                  foregroundColor: const Color(0xFF1A1714),
-                  child: const Icon(Icons.add),
-                )
-              : null,
-    );
-  }
-}
-
-class _PlaceholderTab extends StatelessWidget {
-  const _PlaceholderTab({required this.icon, required this.label});
-
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 48, color: AppTheme.onSurface.withAlpha(76)),
-          const SizedBox(height: 12),
-          Text(
-            '$label — coming soon',
-            style: TextStyle(
-              color: AppTheme.onSurface.withAlpha(128),
-              fontSize: 15,
-            ),
-          ),
-        ],
-      ),
+          ? FloatingActionButton(
+              onPressed: () => showModalBottomSheet<void>(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: AppTheme.surface,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                builder: (_) => const ReminderFormSheet(),
+              ),
+              backgroundColor: AppTheme.amber,
+              foregroundColor: const Color(0xFF1A1714),
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }
