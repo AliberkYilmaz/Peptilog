@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:isar/isar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,15 +36,15 @@ class SyncService {
     required SupabaseSyncRepo<BloodPressureLog> bloodPressureLogRepo,
     required SupabaseSyncRepo<Reminder> reminderRepo,
     Future<bool> Function()? checkConnectivity,
-  })  : _isar = isar,
-        _prefs = prefs,
-        _injectionLogRepo = injectionLogRepo,
-        _peptideRepo = peptideRepo,
-        _weightLogRepo = weightLogRepo,
-        _sleepLogRepo = sleepLogRepo,
-        _bloodPressureLogRepo = bloodPressureLogRepo,
-        _reminderRepo = reminderRepo,
-        _checkConnectivity = checkConnectivity ?? (() async => true);
+  }) : _isar = isar,
+       _prefs = prefs,
+       _injectionLogRepo = injectionLogRepo,
+       _peptideRepo = peptideRepo,
+       _weightLogRepo = weightLogRepo,
+       _sleepLogRepo = sleepLogRepo,
+       _bloodPressureLogRepo = bloodPressureLogRepo,
+       _reminderRepo = reminderRepo,
+       _checkConnectivity = checkConnectivity ?? (() async => true);
 
   final Isar _isar;
   final SharedPreferences _prefs;
@@ -54,6 +56,8 @@ class SyncService {
   final SupabaseSyncRepo<Reminder> _reminderRepo;
   final Future<bool> Function() _checkConnectivity;
 
+  bool _isSyncing = false;
+
   DateTime get _lastSyncAt {
     final raw = _prefs.getString(_kLastSyncKey);
     return raw != null
@@ -64,26 +68,41 @@ class SyncService {
   Future<void> _setLastSyncAt(DateTime dt) =>
       _prefs.setString(_kLastSyncKey, dt.toUtc().toIso8601String());
 
-  bool get isFirstSyncNeeded =>
-      !(_prefs.getBool(_kFirstSyncDoneKey) ?? false);
+  bool get isFirstSyncNeeded => !(_prefs.getBool(_kFirstSyncDoneKey) ?? false);
 
   // ---------------------------------------------------------------------------
   // Public API
   // ---------------------------------------------------------------------------
 
-  /// Runs a full sync cycle for all entities. No-op when offline.
+  /// Runs a full sync cycle for all entities. No-op when offline or already
+  /// syncing. Each entity sync is isolated — a failure in one entity is logged
+  /// but does not prevent the others from completing.
   Future<void> sync(String userId) async {
+    if (_isSyncing) return;
     if (!await _checkConnectivity()) return;
-    final syncStart = DateTime.now().toUtc();
-    await Future.wait([
-      syncInjectionLogs(userId),
-      syncPeptides(userId),
-      syncWeightLogs(userId),
-      syncSleepLogs(userId),
-      syncBloodPressureLogs(userId),
-      syncReminders(userId),
-    ]);
-    await _setLastSyncAt(syncStart);
+    _isSyncing = true;
+    try {
+      final syncStart = DateTime.now().toUtc();
+      Future<void> guarded(String entity, Future<void> Function() fn) async {
+        try {
+          await fn();
+        } catch (e, st) {
+          log('SyncService: $entity sync failed', error: e, stackTrace: st);
+        }
+      }
+
+      await Future.wait([
+        guarded('injectionLogs', () => syncInjectionLogs(userId)),
+        guarded('peptides', () => syncPeptides(userId)),
+        guarded('weightLogs', () => syncWeightLogs(userId)),
+        guarded('sleepLogs', () => syncSleepLogs(userId)),
+        guarded('bloodPressureLogs', () => syncBloodPressureLogs(userId)),
+        guarded('reminders', () => syncReminders(userId)),
+      ]);
+      await _setLastSyncAt(syncStart);
+    } finally {
+      _isSyncing = false;
+    }
   }
 
   /// First-device / fresh-install setup. Clears local Isar data, pulls ALL
@@ -110,8 +129,9 @@ class SyncService {
       await _isar.peptides.putAll(results[1] as List<Peptide>);
       await _isar.weightLogs.putAll(results[2] as List<WeightLog>);
       await _isar.sleepLogs.putAll(results[3] as List<SleepLog>);
-      await _isar.bloodPressureLogs
-          .putAll(results[4] as List<BloodPressureLog>);
+      await _isar.bloodPressureLogs.putAll(
+        results[4] as List<BloodPressureLog>,
+      );
       await _isar.reminders.putAll(results[5] as List<Reminder>);
     });
 
@@ -136,8 +156,7 @@ class SyncService {
 
   Future<void> syncPeptides(String userId) async {
     final lastSync = _lastSyncAt;
-    final dirty =
-        await _isar.peptides.filter().isDirtyEqualTo(true).findAll();
+    final dirty = await _isar.peptides.filter().isDirtyEqualTo(true).findAll();
     await _peptideRepo.pushDirty(dirty);
     final remote = await _peptideRepo.pullSince(lastSync, userId);
     await _mergePeptides(dirty, remote);
@@ -145,8 +164,10 @@ class SyncService {
 
   Future<void> syncWeightLogs(String userId) async {
     final lastSync = _lastSyncAt;
-    final dirty =
-        await _isar.weightLogs.filter().isDirtyEqualTo(true).findAll();
+    final dirty = await _isar.weightLogs
+        .filter()
+        .isDirtyEqualTo(true)
+        .findAll();
     await _weightLogRepo.pushDirty(dirty);
     final remote = await _weightLogRepo.pullSince(lastSync, userId);
     await _mergeWeightLogs(dirty, remote);
@@ -154,8 +175,7 @@ class SyncService {
 
   Future<void> syncSleepLogs(String userId) async {
     final lastSync = _lastSyncAt;
-    final dirty =
-        await _isar.sleepLogs.filter().isDirtyEqualTo(true).findAll();
+    final dirty = await _isar.sleepLogs.filter().isDirtyEqualTo(true).findAll();
     await _sleepLogRepo.pushDirty(dirty);
     final remote = await _sleepLogRepo.pullSince(lastSync, userId);
     await _mergeSleepLogs(dirty, remote);
@@ -174,8 +194,7 @@ class SyncService {
 
   Future<void> syncReminders(String userId) async {
     final lastSync = _lastSyncAt;
-    final dirty =
-        await _isar.reminders.filter().isDirtyEqualTo(true).findAll();
+    final dirty = await _isar.reminders.filter().isDirtyEqualTo(true).findAll();
     await _reminderRepo.pushDirty(dirty);
     final remote = await _reminderRepo.pullSince(lastSync, userId);
     await _mergeReminders(dirty, remote);
