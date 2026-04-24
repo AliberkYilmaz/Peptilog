@@ -247,8 +247,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get medicalDisclaimerFinePrint =>
-      'By tapping \u201cI understand\u201d you acknowledge that you have read this disclaimer and accept sole responsibility for your use of this application.';
+      'By tapping \"I understand\" you acknowledge that you have read this disclaimer and accept sole responsibility for your use of this application.';
 
   @override
-  String get medicalDisclaimerAcceptButton => 'I understand \u2014 continue';
+  String get medicalDisclaimerAcceptButton => 'I understand — continue';
 }

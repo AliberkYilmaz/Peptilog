@@ -541,7 +541,7 @@ abstract class AppLocalizations {
   /// No description provided for @medicalDisclaimerFinePrint.
   ///
   /// In en, this message translates to:
-  /// **'By tapping "I understand" you acknowledge that you have read this disclaimer and accept sole responsibility for your use of this application.'**
+  /// **'By tapping \"I understand\" you acknowledge that you have read this disclaimer and accept sole responsibility for your use of this application.'**
   String get medicalDisclaimerFinePrint;
 
   /// No description provided for @medicalDisclaimerAcceptButton.
