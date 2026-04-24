@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/services/notification_service.dart';
@@ -53,21 +54,37 @@ class ProfileBody extends ConsumerWidget {
       data: (all) {
         final reminders = all.where((r) => !r.isDeleted).toList();
 
-        if (reminders.isEmpty) {
-          return _EmptyState(peptideMap: peptideMap);
-        }
-
-        return ListView.separated(
+        return ListView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
-          itemCount: reminders.length,
-          separatorBuilder: (context, i) => const SizedBox(height: 8),
-          itemBuilder: (context, index) {
-            final reminder = reminders[index];
-            return _ReminderCard(
-              reminder: reminder,
-              peptideName: peptideMap[reminder.peptideId] ?? 'Unknown',
-            );
-          },
+          children: [
+            // --- Tools section ---
+            _SectionHeader('Tools'),
+            const SizedBox(height: 8),
+            _ToolTile(
+              icon: Icons.calculate_outlined,
+              label: 'Dose Calculator',
+              onTap: () => context.push('/calculator'),
+            ),
+            const SizedBox(height: 24),
+
+            // --- Reminders section ---
+            _SectionHeader('Reminders'),
+            const SizedBox(height: 8),
+            if (reminders.isEmpty)
+              _EmptyRemindersHint()
+            else
+              ...reminders.asMap().entries.map((entry) {
+                final i = entry.key;
+                final reminder = entry.value;
+                return Padding(
+                  padding: EdgeInsets.only(top: i == 0 ? 0 : 8),
+                  child: _ReminderCard(
+                    reminder: reminder,
+                    peptideName: peptideMap[reminder.peptideId] ?? 'Unknown',
+                  ),
+                );
+              }),
+          ],
         );
       },
     );
@@ -75,34 +92,97 @@ class ProfileBody extends ConsumerWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Empty state
+// Section header
 // ---------------------------------------------------------------------------
 
-class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.peptideMap});
-
-  final Map<int, String> peptideMap;
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader(this.title);
+  final String title;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+    return Text(
+      title.toUpperCase(),
+      style: GoogleFonts.inter(
+        color: AppTheme.onSurface.withAlpha(128),
+        fontSize: 11,
+        letterSpacing: 1.2,
+        fontWeight: FontWeight.w600,
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tool tile
+// ---------------------------------------------------------------------------
+
+class _ToolTile extends StatelessWidget {
+  const _ToolTile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppTheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppTheme.divider),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: AppTheme.amber, size: 20),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: GoogleFonts.inter(
+                color: AppTheme.onBackground,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const Spacer(),
+            Icon(
+              Icons.chevron_right,
+              color: AppTheme.onSurface.withAlpha(102),
+              size: 18,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Empty reminders hint
+// ---------------------------------------------------------------------------
+
+class _EmptyRemindersHint extends StatelessWidget {
+  const _EmptyRemindersHint();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
         children: [
           Icon(
             Icons.notifications_none_outlined,
-            size: 56,
+            size: 18,
             color: AppTheme.onSurface.withAlpha(76),
           ),
-          const SizedBox(height: 12),
-          Text(
-            'No reminders yet',
-            style: GoogleFonts.playfairDisplay(
-              color: AppTheme.onSurface.withAlpha(153),
-              fontSize: 18,
-            ),
-          ),
-          const SizedBox(height: 6),
+          const SizedBox(width: 8),
           Text(
             'Tap + to schedule injection reminders',
             style: GoogleFonts.inter(
