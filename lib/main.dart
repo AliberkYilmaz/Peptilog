@@ -31,7 +31,7 @@ Future<void> main() async {
   final isar = await IsarDatabase.open();
   await SeedService(isar).seedPresetsIfNeeded();
 
-  await NotificationService.initialize();
+  final notificationLaunchRoute = await NotificationService.initialize();
 
   final prefs = await SharedPreferences.getInstance();
 
@@ -49,14 +49,17 @@ Future<void> main() async {
           isarProvider.overrideWithValue(isar),
           sharedPreferencesProvider.overrideWithValue(prefs),
         ],
-        child: const PeptilogApp(),
+        child: PeptilogApp(notificationLaunchRoute: notificationLaunchRoute),
       ),
     ),
   );
 }
 
 class PeptilogApp extends ConsumerStatefulWidget {
-  const PeptilogApp({super.key});
+  const PeptilogApp({super.key, this.notificationLaunchRoute});
+
+  /// Non-null when the app was cold-launched by tapping a notification.
+  final String? notificationLaunchRoute;
 
   @override
   ConsumerState<PeptilogApp> createState() => _PeptilogAppState();
@@ -77,6 +80,15 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
       final router = ref.read(appRouterProvider);
       router.go(route);
     });
+
+    // If the app was cold-launched by a notification tap, navigate once the
+    // router is ready (after the first frame so the redirect logic can run).
+    if (widget.notificationLaunchRoute != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final router = ref.read(appRouterProvider);
+        router.go(widget.notificationLaunchRoute!);
+      });
+    }
   }
 
   @override

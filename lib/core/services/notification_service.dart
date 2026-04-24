@@ -26,7 +26,10 @@ class NotificationService {
   static const _channelName = 'Injection Reminders';
   static const _channelDesc = 'Daily peptide injection reminders';
 
-  static Future<void> initialize() async {
+  /// Initialises the plugin and returns the route payload if the app was
+  /// cold-launched by a notification tap (terminated state). Returns `null`
+  /// if the app was launched normally.
+  static Future<String?> initialize() async {
     tz_data.initializeTimeZones();
 
     // Detect the device's local timezone and configure the tz package.
@@ -54,6 +57,13 @@ class NotificationService {
         _tapController.add(response.payload ?? '/log/new');
       },
     );
+
+    // Check if the app was launched from a terminated state by a notification.
+    final launchDetails = await _plugin.getNotificationAppLaunchDetails();
+    if (launchDetails?.didNotificationLaunchApp == true) {
+      return launchDetails!.notificationResponse?.payload ?? '/log/new';
+    }
+    return null;
   }
 
   /// Requests OS notification permission.

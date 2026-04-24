@@ -47,6 +47,8 @@
 			</array>
 		</dict>
 	</dict>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>Peptilog sends reminders when it's time for your peptide injection.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

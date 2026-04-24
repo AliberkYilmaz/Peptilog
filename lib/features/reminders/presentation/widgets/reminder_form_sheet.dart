@@ -135,7 +135,33 @@ class _ReminderFormSheetState extends ConsumerState<ReminderFormSheet> {
     reminder.id = savedId;
 
     // Request permission on first save if not already granted.
-    await NotificationService.requestPermission();
+    final granted = await NotificationService.requestPermission();
+    if (!granted && mounted) {
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: AppTheme.surface,
+          title: Text(
+            'Notifications disabled',
+            style: GoogleFonts.playfairDisplay(color: AppTheme.onBackground),
+          ),
+          content: Text(
+            "Enable notifications in Settings so Peptilog can remind you "
+            "when it's time for your injection.",
+            style: GoogleFonts.inter(color: AppTheme.onSurface),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(
+                'Got it',
+                style: GoogleFonts.inter(color: AppTheme.amber),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     await NotificationService.scheduleReminder(reminder, peptide.name);
 
