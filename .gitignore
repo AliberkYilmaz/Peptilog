@@ -49,3 +49,9 @@ app.*.map.json
 .env.staging
 .env.prod
 .env.*.local
+
+# Flutter metadata (machine-generated)
+.metadata
+
+# Supabase local dev temp files
+supabase/.temp/
