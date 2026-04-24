@@ -12,4 +12,7 @@ class Peptide {
   bool isCustom = false;
   String? supabaseId;
   DateTime updatedAt = DateTime.now();
+  bool isDeleted = false;
+  bool isDirty = true;
+  String? userId;
 }

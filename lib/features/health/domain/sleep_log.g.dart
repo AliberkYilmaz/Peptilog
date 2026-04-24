@@ -37,20 +37,30 @@ const SleepLogSchema = CollectionSchema(
       name: r'isDeleted',
       type: IsarType.bool,
     ),
-    r'qualityRating': PropertySchema(
+    r'isDirty': PropertySchema(
       id: 4,
+      name: r'isDirty',
+      type: IsarType.bool,
+    ),
+    r'qualityRating': PropertySchema(
+      id: 5,
       name: r'qualityRating',
       type: IsarType.long,
     ),
     r'supabaseId': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'supabaseId',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'updatedAt',
       type: IsarType.dateTime,
+    ),
+    r'userId': PropertySchema(
+      id: 8,
+      name: r'userId',
+      type: IsarType.string,
     )
   },
   estimateSize: _sleepLogEstimateSize,
@@ -79,6 +89,12 @@ int _sleepLogEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.userId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -92,9 +108,11 @@ void _sleepLogSerialize(
   writer.writeDateTime(offsets[1], object.date);
   writer.writeDouble(offsets[2], object.hours);
   writer.writeBool(offsets[3], object.isDeleted);
-  writer.writeLong(offsets[4], object.qualityRating);
-  writer.writeString(offsets[5], object.supabaseId);
-  writer.writeDateTime(offsets[6], object.updatedAt);
+  writer.writeBool(offsets[4], object.isDirty);
+  writer.writeLong(offsets[5], object.qualityRating);
+  writer.writeString(offsets[6], object.supabaseId);
+  writer.writeDateTime(offsets[7], object.updatedAt);
+  writer.writeString(offsets[8], object.userId);
 }
 
 SleepLog _sleepLogDeserialize(
@@ -109,9 +127,11 @@ SleepLog _sleepLogDeserialize(
   object.hours = reader.readDouble(offsets[2]);
   object.id = id;
   object.isDeleted = reader.readBool(offsets[3]);
-  object.qualityRating = reader.readLongOrNull(offsets[4]);
-  object.supabaseId = reader.readStringOrNull(offsets[5]);
-  object.updatedAt = reader.readDateTime(offsets[6]);
+  object.isDirty = reader.readBool(offsets[4]);
+  object.qualityRating = reader.readLongOrNull(offsets[5]);
+  object.supabaseId = reader.readStringOrNull(offsets[6]);
+  object.updatedAt = reader.readDateTime(offsets[7]);
+  object.userId = reader.readStringOrNull(offsets[8]);
   return object;
 }
 
@@ -131,11 +151,15 @@ P _sleepLogDeserializeProp<P>(
     case 3:
       return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 5:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 6:
+      return (reader.readStringOrNull(offset)) as P;
+    case 7:
       return (reader.readDateTime(offset)) as P;
+    case 8:
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -460,6 +484,16 @@ extension SleepLogQueryFilter
     });
   }
 
+  QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition> isDirtyEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isDirty',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition>
       qualityRatingIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -732,6 +766,152 @@ extension SleepLogQueryFilter
       ));
     });
   }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition> userIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition> userIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition> userIdEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition> userIdGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition> userIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition> userIdBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'userId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition> userIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition> userIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition> userIdContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition> userIdMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'userId',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition> userIdIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'userId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterFilterCondition> userIdIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'userId',
+        value: '',
+      ));
+    });
+  }
 }
 
 extension SleepLogQueryObject
@@ -789,6 +969,18 @@ extension SleepLogQuerySortBy on QueryBuilder<SleepLog, SleepLog, QSortBy> {
     });
   }
 
+  QueryBuilder<SleepLog, SleepLog, QAfterSortBy> sortByIsDirty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterSortBy> sortByIsDirtyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.desc);
+    });
+  }
+
   QueryBuilder<SleepLog, SleepLog, QAfterSortBy> sortByQualityRating() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'qualityRating', Sort.asc);
@@ -822,6 +1014,18 @@ extension SleepLogQuerySortBy on QueryBuilder<SleepLog, SleepLog, QSortBy> {
   QueryBuilder<SleepLog, SleepLog, QAfterSortBy> sortByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterSortBy> sortByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterSortBy> sortByUserIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.desc);
     });
   }
 }
@@ -888,6 +1092,18 @@ extension SleepLogQuerySortThenBy
     });
   }
 
+  QueryBuilder<SleepLog, SleepLog, QAfterSortBy> thenByIsDirty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterSortBy> thenByIsDirtyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.desc);
+    });
+  }
+
   QueryBuilder<SleepLog, SleepLog, QAfterSortBy> thenByQualityRating() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'qualityRating', Sort.asc);
@@ -923,6 +1139,18 @@ extension SleepLogQuerySortThenBy
       return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterSortBy> thenByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QAfterSortBy> thenByUserIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.desc);
+    });
+  }
 }
 
 extension SleepLogQueryWhereDistinct
@@ -951,6 +1179,12 @@ extension SleepLogQueryWhereDistinct
     });
   }
 
+  QueryBuilder<SleepLog, SleepLog, QDistinct> distinctByIsDirty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isDirty');
+    });
+  }
+
   QueryBuilder<SleepLog, SleepLog, QDistinct> distinctByQualityRating() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'qualityRating');
@@ -967,6 +1201,13 @@ extension SleepLogQueryWhereDistinct
   QueryBuilder<SleepLog, SleepLog, QDistinct> distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updatedAt');
+    });
+  }
+
+  QueryBuilder<SleepLog, SleepLog, QDistinct> distinctByUserId(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'userId', caseSensitive: caseSensitive);
     });
   }
 }
@@ -1003,6 +1244,12 @@ extension SleepLogQueryProperty
     });
   }
 
+  QueryBuilder<SleepLog, bool, QQueryOperations> isDirtyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isDirty');
+    });
+  }
+
   QueryBuilder<SleepLog, int?, QQueryOperations> qualityRatingProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'qualityRating');
@@ -1018,6 +1265,12 @@ extension SleepLogQueryProperty
   QueryBuilder<SleepLog, DateTime, QQueryOperations> updatedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'updatedAt');
+    });
+  }
+
+  QueryBuilder<SleepLog, String?, QQueryOperations> userIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'userId');
     });
   }
 }

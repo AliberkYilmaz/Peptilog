@@ -32,40 +32,50 @@ const InjectionLogSchema = CollectionSchema(
       name: r'isDeleted',
       type: IsarType.bool,
     ),
-    r'loggedAt': PropertySchema(
+    r'isDirty': PropertySchema(
       id: 3,
+      name: r'isDirty',
+      type: IsarType.bool,
+    ),
+    r'loggedAt': PropertySchema(
+      id: 4,
       name: r'loggedAt',
       type: IsarType.dateTime,
     ),
     r'notes': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'notes',
       type: IsarType.string,
     ),
     r'peptideId': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'peptideId',
       type: IsarType.long,
     ),
     r'route': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'route',
       type: IsarType.string,
     ),
     r'supabaseId': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'supabaseId',
       type: IsarType.string,
     ),
     r'units': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'units',
       type: IsarType.double,
     ),
     r'updatedAt': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'updatedAt',
       type: IsarType.dateTime,
+    ),
+    r'userId': PropertySchema(
+      id: 11,
+      name: r'userId',
+      type: IsarType.string,
     )
   },
   estimateSize: _injectionLogEstimateSize,
@@ -101,6 +111,12 @@ int _injectionLogEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.userId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -113,13 +129,15 @@ void _injectionLogSerialize(
   writer.writeDateTime(offsets[0], object.createdAt);
   writer.writeDouble(offsets[1], object.doseMg);
   writer.writeBool(offsets[2], object.isDeleted);
-  writer.writeDateTime(offsets[3], object.loggedAt);
-  writer.writeString(offsets[4], object.notes);
-  writer.writeLong(offsets[5], object.peptideId);
-  writer.writeString(offsets[6], object.route);
-  writer.writeString(offsets[7], object.supabaseId);
-  writer.writeDouble(offsets[8], object.units);
-  writer.writeDateTime(offsets[9], object.updatedAt);
+  writer.writeBool(offsets[3], object.isDirty);
+  writer.writeDateTime(offsets[4], object.loggedAt);
+  writer.writeString(offsets[5], object.notes);
+  writer.writeLong(offsets[6], object.peptideId);
+  writer.writeString(offsets[7], object.route);
+  writer.writeString(offsets[8], object.supabaseId);
+  writer.writeDouble(offsets[9], object.units);
+  writer.writeDateTime(offsets[10], object.updatedAt);
+  writer.writeString(offsets[11], object.userId);
 }
 
 InjectionLog _injectionLogDeserialize(
@@ -133,13 +151,15 @@ InjectionLog _injectionLogDeserialize(
   object.doseMg = reader.readDouble(offsets[1]);
   object.id = id;
   object.isDeleted = reader.readBool(offsets[2]);
-  object.loggedAt = reader.readDateTime(offsets[3]);
-  object.notes = reader.readStringOrNull(offsets[4]);
-  object.peptideId = reader.readLong(offsets[5]);
-  object.route = reader.readString(offsets[6]);
-  object.supabaseId = reader.readStringOrNull(offsets[7]);
-  object.units = reader.readDoubleOrNull(offsets[8]);
-  object.updatedAt = reader.readDateTime(offsets[9]);
+  object.isDirty = reader.readBool(offsets[3]);
+  object.loggedAt = reader.readDateTime(offsets[4]);
+  object.notes = reader.readStringOrNull(offsets[5]);
+  object.peptideId = reader.readLong(offsets[6]);
+  object.route = reader.readString(offsets[7]);
+  object.supabaseId = reader.readStringOrNull(offsets[8]);
+  object.units = reader.readDoubleOrNull(offsets[9]);
+  object.updatedAt = reader.readDateTime(offsets[10]);
+  object.userId = reader.readStringOrNull(offsets[11]);
   return object;
 }
 
@@ -157,19 +177,23 @@ P _injectionLogDeserializeProp<P>(
     case 2:
       return (reader.readBool(offset)) as P;
     case 3:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readStringOrNull(offset)) as P;
-    case 5:
-      return (reader.readLong(offset)) as P;
-    case 6:
-      return (reader.readString(offset)) as P;
-    case 7:
-      return (reader.readStringOrNull(offset)) as P;
-    case 8:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 9:
       return (reader.readDateTime(offset)) as P;
+    case 5:
+      return (reader.readStringOrNull(offset)) as P;
+    case 6:
+      return (reader.readLong(offset)) as P;
+    case 7:
+      return (reader.readString(offset)) as P;
+    case 8:
+      return (reader.readStringOrNull(offset)) as P;
+    case 9:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 10:
+      return (reader.readDateTime(offset)) as P;
+    case 11:
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -447,6 +471,16 @@ extension InjectionLogQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isDeleted',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterFilterCondition>
+      isDirtyEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isDirty',
         value: value,
       ));
     });
@@ -1140,6 +1174,159 @@ extension InjectionLogQueryFilter
       ));
     });
   }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterFilterCondition>
+      userIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterFilterCondition>
+      userIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterFilterCondition> userIdEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterFilterCondition>
+      userIdGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterFilterCondition>
+      userIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterFilterCondition> userIdBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'userId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterFilterCondition>
+      userIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterFilterCondition>
+      userIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterFilterCondition>
+      userIdContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterFilterCondition> userIdMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'userId',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterFilterCondition>
+      userIdIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'userId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterFilterCondition>
+      userIdIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'userId',
+        value: '',
+      ));
+    });
+  }
 }
 
 extension InjectionLogQueryObject
@@ -1183,6 +1370,18 @@ extension InjectionLogQuerySortBy
   QueryBuilder<InjectionLog, InjectionLog, QAfterSortBy> sortByIsDeletedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDeleted', Sort.desc);
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterSortBy> sortByIsDirty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.asc);
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterSortBy> sortByIsDirtyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.desc);
     });
   }
 
@@ -1270,6 +1469,18 @@ extension InjectionLogQuerySortBy
       return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterSortBy> sortByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterSortBy> sortByUserIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.desc);
+    });
+  }
 }
 
 extension InjectionLogQuerySortThenBy
@@ -1319,6 +1530,18 @@ extension InjectionLogQuerySortThenBy
   QueryBuilder<InjectionLog, InjectionLog, QAfterSortBy> thenByIsDeletedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDeleted', Sort.desc);
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterSortBy> thenByIsDirty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.asc);
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterSortBy> thenByIsDirtyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.desc);
     });
   }
 
@@ -1406,6 +1629,18 @@ extension InjectionLogQuerySortThenBy
       return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterSortBy> thenByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QAfterSortBy> thenByUserIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.desc);
+    });
+  }
 }
 
 extension InjectionLogQueryWhereDistinct
@@ -1425,6 +1660,12 @@ extension InjectionLogQueryWhereDistinct
   QueryBuilder<InjectionLog, InjectionLog, QDistinct> distinctByIsDeleted() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isDeleted');
+    });
+  }
+
+  QueryBuilder<InjectionLog, InjectionLog, QDistinct> distinctByIsDirty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isDirty');
     });
   }
 
@@ -1472,6 +1713,13 @@ extension InjectionLogQueryWhereDistinct
       return query.addDistinctBy(r'updatedAt');
     });
   }
+
+  QueryBuilder<InjectionLog, InjectionLog, QDistinct> distinctByUserId(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'userId', caseSensitive: caseSensitive);
+    });
+  }
 }
 
 extension InjectionLogQueryProperty
@@ -1497,6 +1745,12 @@ extension InjectionLogQueryProperty
   QueryBuilder<InjectionLog, bool, QQueryOperations> isDeletedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isDeleted');
+    });
+  }
+
+  QueryBuilder<InjectionLog, bool, QQueryOperations> isDirtyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isDirty');
     });
   }
 
@@ -1539,6 +1793,12 @@ extension InjectionLogQueryProperty
   QueryBuilder<InjectionLog, DateTime, QQueryOperations> updatedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'updatedAt');
+    });
+  }
+
+  QueryBuilder<InjectionLog, String?, QQueryOperations> userIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'userId');
     });
   }
 }

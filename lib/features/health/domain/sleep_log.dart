@@ -12,4 +12,6 @@ class SleepLog {
   String? supabaseId;
   DateTime updatedAt = DateTime.now();
   bool isDeleted = false;
+  bool isDirty = true;
+  String? userId;
 }

@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
 
 import 'package:peptilog_app/core/providers/database_providers.dart';
 import 'package:peptilog_app/features/injection_log/data/injection_log_repository.dart';
@@ -58,7 +57,6 @@ class FakePeptideRepository implements PeptideRepository {
   @override
   Future<int> save(Peptide peptide) async => 1;
 
-  @override
   Future<void> softDelete(int id) async {}
 
   @override
