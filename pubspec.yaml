@@ -41,6 +41,10 @@ dependencies:
   # Monitoring
   sentry_flutter: ^8.14.0
 
+  # Sync / Connectivity
+  connectivity_plus: ^6.0.0
+  shared_preferences: ^2.3.0
+
   # Utilities
   intl: ^0.20.2
   uuid: ^4.5.1
