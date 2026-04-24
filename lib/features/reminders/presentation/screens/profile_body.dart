@@ -69,6 +69,12 @@ class ProfileBody extends ConsumerWidget {
               label: 'Order Calculator',
               onTap: () => context.push('/order-calculator'),
             ),
+            const SizedBox(height: 8),
+            _ToolTile(
+              icon: Icons.bar_chart_outlined,
+              label: 'Analytics',
+              onTap: () => context.push('/analytics'),
+            ),
             const SizedBox(height: 24),
 
             // --- Reminders section ---
