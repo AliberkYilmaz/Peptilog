@@ -1,18 +1,13 @@
 import 'package:isar/isar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../features/health/data/supabase_blood_pressure_log_repository.dart';
-import '../../features/health/data/supabase_sleep_log_repository.dart';
 import '../../features/health/domain/blood_pressure_log.dart';
 import '../../features/health/domain/sleep_log.dart';
-import '../../features/injection_log/data/supabase_injection_log_repository.dart';
 import '../../features/injection_log/domain/injection_log.dart';
-import '../../features/peptides/data/supabase_peptide_repository.dart';
 import '../../features/peptides/domain/peptide.dart';
-import '../../features/reminders/data/supabase_reminder_repository.dart';
 import '../../features/reminders/domain/reminder.dart';
-import '../../features/weight/data/supabase_weight_log_repository.dart';
 import '../../features/weight/domain/weight_log.dart';
+import 'supabase_sync_repo.dart';
 
 const _kLastSyncKey = 'sync.lastSyncAt';
 const _kFirstSyncDoneKey = 'sync.firstSyncDone';
@@ -25,16 +20,20 @@ const _kFirstSyncDoneKey = 'sync.firstSyncDone';
 ///   3. Pull remote changes since lastSyncAt
 ///   4. Merge into Isar — remote wins when remote.updatedAt > local.updatedAt
 ///   5. Clear isDirty flags, persist new lastSyncAt
+///
+/// [checkConnectivity] is called before every sync attempt; when it returns
+/// false the call is a no-op. Defaults to always-online (useful in tests).
 class SyncService {
   SyncService({
     required Isar isar,
     required SharedPreferences prefs,
-    required SupabaseInjectionLogRepository injectionLogRepo,
-    required SupabasePeptideRepository peptideRepo,
-    required SupabaseWeightLogRepository weightLogRepo,
-    required SupabaseSleepLogRepository sleepLogRepo,
-    required SupabaseBloodPressureLogRepository bloodPressureLogRepo,
-    required SupabaseReminderRepository reminderRepo,
+    required SupabaseSyncRepo<InjectionLog> injectionLogRepo,
+    required SupabaseSyncRepo<Peptide> peptideRepo,
+    required SupabaseSyncRepo<WeightLog> weightLogRepo,
+    required SupabaseSyncRepo<SleepLog> sleepLogRepo,
+    required SupabaseSyncRepo<BloodPressureLog> bloodPressureLogRepo,
+    required SupabaseSyncRepo<Reminder> reminderRepo,
+    Future<bool> Function()? checkConnectivity,
   })  : _isar = isar,
         _prefs = prefs,
         _injectionLogRepo = injectionLogRepo,
@@ -42,16 +41,18 @@ class SyncService {
         _weightLogRepo = weightLogRepo,
         _sleepLogRepo = sleepLogRepo,
         _bloodPressureLogRepo = bloodPressureLogRepo,
-        _reminderRepo = reminderRepo;
+        _reminderRepo = reminderRepo,
+        _checkConnectivity = checkConnectivity ?? (() async => true);
 
   final Isar _isar;
   final SharedPreferences _prefs;
-  final SupabaseInjectionLogRepository _injectionLogRepo;
-  final SupabasePeptideRepository _peptideRepo;
-  final SupabaseWeightLogRepository _weightLogRepo;
-  final SupabaseSleepLogRepository _sleepLogRepo;
-  final SupabaseBloodPressureLogRepository _bloodPressureLogRepo;
-  final SupabaseReminderRepository _reminderRepo;
+  final SupabaseSyncRepo<InjectionLog> _injectionLogRepo;
+  final SupabaseSyncRepo<Peptide> _peptideRepo;
+  final SupabaseSyncRepo<WeightLog> _weightLogRepo;
+  final SupabaseSyncRepo<SleepLog> _sleepLogRepo;
+  final SupabaseSyncRepo<BloodPressureLog> _bloodPressureLogRepo;
+  final SupabaseSyncRepo<Reminder> _reminderRepo;
+  final Future<bool> Function() _checkConnectivity;
 
   DateTime get _lastSyncAt {
     final raw = _prefs.getString(_kLastSyncKey);
@@ -70,8 +71,9 @@ class SyncService {
   // Public API
   // ---------------------------------------------------------------------------
 
-  /// Runs a full sync cycle for all entities.
+  /// Runs a full sync cycle for all entities. No-op when offline.
   Future<void> sync(String userId) async {
+    if (!await _checkConnectivity()) return;
     final syncStart = DateTime.now().toUtc();
     await Future.wait([
       syncInjectionLogs(userId),

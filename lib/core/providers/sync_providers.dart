@@ -51,6 +51,7 @@ final _supabaseReminderRepoProvider = Provider<SupabaseReminderRepository>(
 );
 
 final syncServiceProvider = Provider<SyncService>((ref) {
+  final connectivityService = ref.watch(connectivityServiceProvider);
   return SyncService(
     isar: ref.watch(isarProvider),
     prefs: ref.watch(sharedPreferencesProvider),
@@ -60,6 +61,7 @@ final syncServiceProvider = Provider<SyncService>((ref) {
     sleepLogRepo: ref.watch(_supabaseSleepLogRepoProvider),
     bloodPressureLogRepo: ref.watch(_supabaseBloodPressureLogRepoProvider),
     reminderRepo: ref.watch(_supabaseReminderRepoProvider),
+    checkConnectivity: () => connectivityService.isOnline,
   );
 });
 
