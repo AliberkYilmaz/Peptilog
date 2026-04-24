@@ -13,6 +13,7 @@ import '../../features/auth/presentation/screens/sign_in_screen.dart';
 import '../../features/auth/presentation/screens/sign_up_screen.dart';
 import '../../features/calculator/calculator_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
+import '../../features/order_calculator/order_calculator_screen.dart';
 
 /// A [ChangeNotifier] that invalidates the router whenever auth state changes.
 class _RouterNotifier extends ChangeNotifier {
@@ -141,6 +142,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/calculator',
         builder: (context, state) => const CalculatorScreen(),
+      ),
+      GoRoute(
+        path: '/order-calculator',
+        builder: (context, state) => const OrderCalculatorScreen(),
       ),
       // Health tab deep-links
       GoRoute(

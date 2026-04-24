@@ -39,9 +39,7 @@ class ProfileBody extends ConsumerWidget {
     final peptidesAsync = ref.watch(activePeptidesProvider);
 
     final peptideList = peptidesAsync.valueOrNull ?? <Peptide>[];
-    final peptideMap = <int, String>{
-      for (final p in peptideList) p.id: p.name,
-    };
+    final peptideMap = <int, String>{for (final p in peptideList) p.id: p.name};
 
     return remindersAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -64,6 +62,12 @@ class ProfileBody extends ConsumerWidget {
               icon: Icons.calculate_outlined,
               label: 'Dose Calculator',
               onTap: () => context.push('/calculator'),
+            ),
+            const SizedBox(height: 8),
+            _ToolTile(
+              icon: Icons.inventory_2_outlined,
+              label: 'Order Calculator',
+              onTap: () => context.push('/order-calculator'),
             ),
             const SizedBox(height: 24),
 
@@ -201,10 +205,7 @@ class _EmptyRemindersHint extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class _ReminderCard extends ConsumerWidget {
-  const _ReminderCard({
-    required this.reminder,
-    required this.peptideName,
-  });
+  const _ReminderCard({required this.reminder, required this.peptideName});
 
   final Reminder reminder;
   final String peptideName;
@@ -237,7 +238,9 @@ class _ReminderCard extends ConsumerWidget {
           color: AppTheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: reminder.isActive ? AppTheme.divider : AppTheme.divider.withAlpha(128),
+            color: reminder.isActive
+                ? AppTheme.divider
+                : AppTheme.divider.withAlpha(128),
           ),
         ),
         child: Row(
