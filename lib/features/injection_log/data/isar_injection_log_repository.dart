@@ -6,9 +6,14 @@ import 'injection_log_repository.dart';
 class IsarInjectionLogRepository implements InjectionLogRepository {
   final Isar _isar;
   final void Function()? _onMutated;
+  final String? Function()? _getCurrentUserId;
 
-  const IsarInjectionLogRepository(this._isar, {void Function()? onMutated})
-      : _onMutated = onMutated;
+  const IsarInjectionLogRepository(
+    this._isar, {
+    void Function()? onMutated,
+    String? Function()? getCurrentUserId,
+  })  : _onMutated = onMutated,
+        _getCurrentUserId = getCurrentUserId;
 
   @override
   Future<List<InjectionLog>> getAll() =>
@@ -38,6 +43,7 @@ class IsarInjectionLogRepository implements InjectionLogRepository {
 
   @override
   Future<int> save(InjectionLog log) async {
+    log.userId ??= _getCurrentUserId?.call();
     final result = await _isar.writeTxn(() => _isar.injectionLogs.put(log));
     _onMutated?.call();
     return result;

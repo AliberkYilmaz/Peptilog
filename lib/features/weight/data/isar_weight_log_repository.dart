@@ -6,9 +6,14 @@ import 'weight_log_repository.dart';
 class IsarWeightLogRepository implements WeightLogRepository {
   final Isar _isar;
   final void Function()? _onMutated;
+  final String? Function()? _getCurrentUserId;
 
-  const IsarWeightLogRepository(this._isar, {void Function()? onMutated})
-      : _onMutated = onMutated;
+  const IsarWeightLogRepository(
+    this._isar, {
+    void Function()? onMutated,
+    String? Function()? getCurrentUserId,
+  })  : _onMutated = onMutated,
+        _getCurrentUserId = getCurrentUserId;
 
   @override
   Future<List<WeightLog>> getAll() =>
@@ -19,7 +24,9 @@ class IsarWeightLogRepository implements WeightLogRepository {
 
   @override
   Future<int> save(WeightLog log) async {
-    log.updatedAt = DateTime.now();
+    log
+      ..userId ??= _getCurrentUserId?.call()
+      ..updatedAt = DateTime.now();
     final result = await _isar.writeTxn(() => _isar.weightLogs.put(log));
     _onMutated?.call();
     return result;

@@ -6,9 +6,14 @@ import 'reminder_repository.dart';
 class IsarReminderRepository implements ReminderRepository {
   final Isar _isar;
   final void Function()? _onMutated;
+  final String? Function()? _getCurrentUserId;
 
-  const IsarReminderRepository(this._isar, {void Function()? onMutated})
-      : _onMutated = onMutated;
+  const IsarReminderRepository(
+    this._isar, {
+    void Function()? onMutated,
+    String? Function()? getCurrentUserId,
+  })  : _onMutated = onMutated,
+        _getCurrentUserId = getCurrentUserId;
 
   @override
   Future<List<Reminder>> getAll() => _isar.reminders.where().findAll();
@@ -26,6 +31,7 @@ class IsarReminderRepository implements ReminderRepository {
 
   @override
   Future<int> save(Reminder reminder) async {
+    reminder.userId ??= _getCurrentUserId?.call();
     final result =
         await _isar.writeTxn(() => _isar.reminders.put(reminder));
     _onMutated?.call();

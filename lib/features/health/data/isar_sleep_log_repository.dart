@@ -6,9 +6,14 @@ import 'sleep_log_repository.dart';
 class IsarSleepLogRepository implements SleepLogRepository {
   final Isar _isar;
   final void Function()? _onMutated;
+  final String? Function()? _getCurrentUserId;
 
-  const IsarSleepLogRepository(this._isar, {void Function()? onMutated})
-      : _onMutated = onMutated;
+  const IsarSleepLogRepository(
+    this._isar, {
+    void Function()? onMutated,
+    String? Function()? getCurrentUserId,
+  })  : _onMutated = onMutated,
+        _getCurrentUserId = getCurrentUserId;
 
   @override
   Future<List<SleepLog>> getAll() =>
@@ -19,7 +24,9 @@ class IsarSleepLogRepository implements SleepLogRepository {
 
   @override
   Future<int> save(SleepLog log) async {
-    log.updatedAt = DateTime.now();
+    log
+      ..userId ??= _getCurrentUserId?.call()
+      ..updatedAt = DateTime.now();
     final result = await _isar.writeTxn(() => _isar.sleepLogs.put(log));
     _onMutated?.call();
     return result;

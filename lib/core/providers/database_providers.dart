@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 
+import '../../features/auth/data/auth_providers.dart';
 import '../../features/peptides/data/peptide_repository.dart';
 import '../../features/peptides/data/isar_peptide_repository.dart';
 import '../../features/injection_log/data/injection_log_repository.dart';
@@ -28,7 +29,11 @@ final isarProvider = Provider<Isar>((ref) {
 
 final peptideRepositoryProvider = Provider<PeptideRepository>((ref) {
   final onMutated = ref.read(syncControllerProvider).onRecordWritten;
-  return IsarPeptideRepository(ref.watch(isarProvider), onMutated: onMutated);
+  return IsarPeptideRepository(
+    ref.watch(isarProvider),
+    onMutated: onMutated,
+    getCurrentUserId: () => ref.read(authRepositoryProvider).currentUser?.id,
+  );
 });
 
 final injectionLogRepositoryProvider = Provider<InjectionLogRepository>((ref) {
@@ -36,6 +41,7 @@ final injectionLogRepositoryProvider = Provider<InjectionLogRepository>((ref) {
   return IsarInjectionLogRepository(
     ref.watch(isarProvider),
     onMutated: onMutated,
+    getCurrentUserId: () => ref.read(authRepositoryProvider).currentUser?.id,
   );
 });
 
@@ -44,6 +50,7 @@ final weightLogRepositoryProvider = Provider<WeightLogRepository>((ref) {
   return IsarWeightLogRepository(
     ref.watch(isarProvider),
     onMutated: onMutated,
+    getCurrentUserId: () => ref.read(authRepositoryProvider).currentUser?.id,
   );
 });
 
@@ -52,6 +59,7 @@ final sleepLogRepositoryProvider = Provider<SleepLogRepository>((ref) {
   return IsarSleepLogRepository(
     ref.watch(isarProvider),
     onMutated: onMutated,
+    getCurrentUserId: () => ref.read(authRepositoryProvider).currentUser?.id,
   );
 });
 
@@ -61,6 +69,7 @@ final bloodPressureLogRepositoryProvider = Provider<BloodPressureLogRepository>(
     return IsarBloodPressureLogRepository(
       ref.watch(isarProvider),
       onMutated: onMutated,
+      getCurrentUserId: () => ref.read(authRepositoryProvider).currentUser?.id,
     );
   },
 );
@@ -70,5 +79,6 @@ final reminderRepositoryProvider = Provider<ReminderRepository>((ref) {
   return IsarReminderRepository(
     ref.watch(isarProvider),
     onMutated: onMutated,
+    getCurrentUserId: () => ref.read(authRepositoryProvider).currentUser?.id,
   );
 });
