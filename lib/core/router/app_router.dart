@@ -132,6 +132,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/quick-log',
         builder: (context, state) => const DashboardScreen(initialTab: 1),
       ),
+      // Deep-link from notification tap → opens the Quick Log tab.
+      GoRoute(
+        path: '/log/new',
+        builder: (context, state) => const DashboardScreen(initialTab: 1),
+      ),
     ],
   );
 });

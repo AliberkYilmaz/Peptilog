@@ -162,4 +162,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logoutButton => 'Sign out';
+
+  @override
+  String get remindersTitle => 'Reminders';
+
+  @override
+  String get remindersEmpty => 'No reminders yet';
+
+  @override
+  String get remindersEmptyHint => 'Tap + to schedule injection reminders';
+
+  @override
+  String get reminderFormNew => 'New Reminder';
+
+  @override
+  String get reminderFormEdit => 'Edit Reminder';
+
+  @override
+  String get reminderFormPeptideLabel => 'Peptide';
+
+  @override
+  String get reminderFormPeptidePlaceholder => 'Select peptide';
+
+  @override
+  String get reminderFormNoPeptides =>
+      'No active peptides found. Add peptides first.';
+
+  @override
+  String get reminderFormDaysLabel => 'Days';
+
+  @override
+  String get reminderFormTimeLabel => 'Time';
+
+  @override
+  String get reminderFormActiveLabel => 'Active';
+
+  @override
+  String get reminderFormSave => 'Save';
+
+  @override
+  String get reminderFormDelete => 'Delete Reminder';
+
+  @override
+  String get reminderDeleteConfirmTitle => 'Delete reminder?';
+
+  @override
+  String get reminderDeleteConfirmBody =>
+      'This reminder and its notifications will be removed.';
+
+  @override
+  String get reminderErrorSelectPeptide => 'Select a peptide';
+
+  @override
+  String get reminderErrorSelectDay => 'Select at least one day';
 }

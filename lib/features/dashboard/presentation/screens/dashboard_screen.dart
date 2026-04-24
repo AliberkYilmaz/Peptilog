@@ -5,6 +5,8 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/offline_banner.dart';
 import '../../../calendar/presentation/screens/calendar_body.dart';
 import '../../../injection_log/presentation/screens/quick_log_body.dart';
+import '../../../reminders/presentation/screens/profile_body.dart';
+import '../../../reminders/presentation/widgets/reminder_form_sheet.dart';
 import '../../../weight/presentation/screens/weight_body.dart';
 import '../providers/dashboard_providers.dart';
 
@@ -57,7 +59,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           QuickLogBody(),
           WeightBody(),
           _PlaceholderTab(icon: Icons.favorite_border, label: 'Health'),
-          _PlaceholderTab(icon: Icons.person_outline, label: 'Profile'),
+          ProfileBody(),
         ],
       ),
       bottomNavigationBar: OfflineBannerScaffold(
@@ -97,7 +99,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ],
         ),
       ),
-      // FAB on Calendar tab — navigates to the Log tab for quick access.
+      // FAB: Calendar tab → open Quick Log; Profile tab → add reminder.
       floatingActionButton: currentTab == 0
           ? FloatingActionButton(
               onPressed: () => ref.read(selectedTabProvider.notifier).state = 1,
@@ -105,7 +107,23 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               foregroundColor: const Color(0xFF1A1714),
               child: const Icon(Icons.add),
             )
-          : null,
+          : currentTab == 4
+              ? FloatingActionButton(
+                  onPressed: () => showModalBottomSheet<void>(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: AppTheme.surface,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(16)),
+                    ),
+                    builder: (_) => const ReminderFormSheet(),
+                  ),
+                  backgroundColor: AppTheme.amber,
+                  foregroundColor: const Color(0xFF1A1714),
+                  child: const Icon(Icons.add),
+                )
+              : null,
     );
   }
 }

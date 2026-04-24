@@ -41,6 +41,11 @@ dependencies:
   # Monitoring
   sentry_flutter: ^8.14.0
 
+  # Reminders / Notifications
+  flutter_local_notifications: ^17.0.0
+  flutter_timezone: ^1.0.4
+  timezone: ^0.9.4
+
   # Sync / Connectivity
   connectivity_plus: ^6.0.0
   shared_preferences: ^2.3.0

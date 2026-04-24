@@ -387,6 +387,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign out'**
   String get logoutButton;
+
+  /// No description provided for @remindersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get remindersTitle;
+
+  /// No description provided for @remindersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No reminders yet'**
+  String get remindersEmpty;
+
+  /// No description provided for @remindersEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + to schedule injection reminders'**
+  String get remindersEmptyHint;
+
+  /// No description provided for @reminderFormNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New Reminder'**
+  String get reminderFormNew;
+
+  /// No description provided for @reminderFormEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Reminder'**
+  String get reminderFormEdit;
+
+  /// No description provided for @reminderFormPeptideLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Peptide'**
+  String get reminderFormPeptideLabel;
+
+  /// No description provided for @reminderFormPeptidePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Select peptide'**
+  String get reminderFormPeptidePlaceholder;
+
+  /// No description provided for @reminderFormNoPeptides.
+  ///
+  /// In en, this message translates to:
+  /// **'No active peptides found. Add peptides first.'**
+  String get reminderFormNoPeptides;
+
+  /// No description provided for @reminderFormDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Days'**
+  String get reminderFormDaysLabel;
+
+  /// No description provided for @reminderFormTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get reminderFormTimeLabel;
+
+  /// No description provided for @reminderFormActiveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get reminderFormActiveLabel;
+
+  /// No description provided for @reminderFormSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get reminderFormSave;
+
+  /// No description provided for @reminderFormDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Reminder'**
+  String get reminderFormDelete;
+
+  /// No description provided for @reminderDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete reminder?'**
+  String get reminderDeleteConfirmTitle;
+
+  /// No description provided for @reminderDeleteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This reminder and its notifications will be removed.'**
+  String get reminderDeleteConfirmBody;
+
+  /// No description provided for @reminderErrorSelectPeptide.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a peptide'**
+  String get reminderErrorSelectPeptide;
+
+  /// No description provided for @reminderErrorSelectDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one day'**
+  String get reminderErrorSelectDay;
 }
 
 class _AppLocalizationsDelegate

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -10,6 +12,7 @@ import 'core/database/seed_service.dart';
 import 'core/providers/database_providers.dart';
 import 'core/providers/sync_providers.dart';
 import 'core/router/app_router.dart';
+import 'core/services/notification_service.dart';
 import 'core/sync/sync_controller.dart';
 import 'core/theme/app_theme.dart';
 
@@ -27,6 +30,8 @@ Future<void> main() async {
 
   final isar = await IsarDatabase.open();
   await SeedService(isar).seedPresetsIfNeeded();
+
+  await NotificationService.initialize();
 
   final prefs = await SharedPreferences.getInstance();
 
@@ -59,17 +64,25 @@ class PeptilogApp extends ConsumerStatefulWidget {
 
 class _PeptilogAppState extends ConsumerState<PeptilogApp> {
   late SyncController _syncController;
+  StreamSubscription<String>? _notifTapSub;
 
   @override
   void initState() {
     super.initState();
     _syncController = ref.read(syncControllerProvider);
     _syncController.init();
+
+    // Navigate to the payload route when a notification is tapped.
+    _notifTapSub = NotificationService.tapRoute.listen((route) {
+      final router = ref.read(appRouterProvider);
+      router.go(route);
+    });
   }
 
   @override
   void dispose() {
     _syncController.dispose();
+    _notifTapSub?.cancel();
     super.dispose();
   }
 

@@ -58,5 +58,23 @@
   "gdprPrivacyPolicy": "Read our full Privacy Policy",
 
   "dashboardTitle": "Today",
-  "logoutButton": "Sign out"
+  "logoutButton": "Sign out",
+
+  "remindersTitle": "Reminders",
+  "remindersEmpty": "No reminders yet",
+  "remindersEmptyHint": "Tap + to schedule injection reminders",
+  "reminderFormNew": "New Reminder",
+  "reminderFormEdit": "Edit Reminder",
+  "reminderFormPeptideLabel": "Peptide",
+  "reminderFormPeptidePlaceholder": "Select peptide",
+  "reminderFormNoPeptides": "No active peptides found. Add peptides first.",
+  "reminderFormDaysLabel": "Days",
+  "reminderFormTimeLabel": "Time",
+  "reminderFormActiveLabel": "Active",
+  "reminderFormSave": "Save",
+  "reminderFormDelete": "Delete Reminder",
+  "reminderDeleteConfirmTitle": "Delete reminder?",
+  "reminderDeleteConfirmBody": "This reminder and its notifications will be removed.",
+  "reminderErrorSelectPeptide": "Select a peptide",
+  "reminderErrorSelectDay": "Select at least one day"
 }
