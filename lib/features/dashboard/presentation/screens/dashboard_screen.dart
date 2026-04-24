@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/offline_banner.dart';
 import '../../../calendar/presentation/screens/calendar_body.dart';
 import '../../../injection_log/presentation/screens/quick_log_body.dart';
+import '../../../weight/presentation/screens/weight_body.dart';
 import '../providers/dashboard_providers.dart';
 
 /// Main app shell with 5-tab bottom navigation.
@@ -54,7 +55,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         children: const [
           CalendarBody(),
           QuickLogBody(),
-          _PlaceholderTab(icon: Icons.monitor_weight_outlined, label: 'Weight'),
+          WeightBody(),
           _PlaceholderTab(icon: Icons.favorite_border, label: 'Health'),
           _PlaceholderTab(icon: Icons.person_outline, label: 'Profile'),
         ],
