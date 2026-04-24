@@ -17,10 +17,9 @@ class SupabaseSleepLogRepository implements SupabaseSyncRepo<SleepLog> {
     for (final r in records) {
       r.supabaseId ??= _uuid.v4();
     }
-    await _client.from(_table).upsert(
-          records.map(_toJson).toList(),
-          onConflict: 'id',
-        );
+    await _client
+        .from(_table)
+        .upsert(records.map(_toJson).toList(), onConflict: 'id');
   }
 
   @override
@@ -34,15 +33,15 @@ class SupabaseSleepLogRepository implements SupabaseSyncRepo<SleepLog> {
   }
 
   static Map<String, dynamic> _toJson(SleepLog r) => {
-        'id': r.supabaseId,
-        'user_id': r.userId,
-        'hours': r.hours,
-        'quality_rating': r.qualityRating,
-        'date': r.date.toUtc().toIso8601String(),
-        'created_at': r.createdAt.toUtc().toIso8601String(),
-        'updated_at': r.updatedAt.toUtc().toIso8601String(),
-        'is_deleted': r.isDeleted,
-      };
+    'id': r.supabaseId,
+    'user_id': r.userId,
+    'hours': r.hours,
+    'quality_rating': r.qualityRating,
+    'date': r.date.toUtc().toIso8601String(),
+    'created_at': r.createdAt.toUtc().toIso8601String(),
+    'updated_at': r.updatedAt.toUtc().toIso8601String(),
+    'is_deleted': r.isDeleted,
+  };
 
   static SleepLog _fromJson(Map<String, dynamic> json) {
     final log = SleepLog()

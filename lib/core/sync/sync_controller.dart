@@ -17,8 +17,8 @@ class SyncController with WidgetsBindingObserver {
   SyncController({
     required SyncService syncService,
     required Stream<bool> onlineStream,
-  })  : _syncService = syncService,
-        _onlineStream = onlineStream;
+  }) : _syncService = syncService,
+       _onlineStream = onlineStream;
 
   final SyncService _syncService;
   final Stream<bool> _onlineStream;

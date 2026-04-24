@@ -11,8 +11,8 @@ class ConnectivityService {
   final Connectivity _connectivity;
 
   /// Emits `true` when the device is online, `false` when offline.
-  Stream<bool> get onlineStream => _connectivity.onConnectivityChanged
-      .map((results) => _isOnline(results));
+  Stream<bool> get onlineStream =>
+      _connectivity.onConnectivityChanged.map((results) => _isOnline(results));
 
   /// Returns the current online status as a one-shot future.
   Future<bool> get isOnline async {
@@ -20,9 +20,10 @@ class ConnectivityService {
     return _isOnline(results);
   }
 
-  static bool _isOnline(List<ConnectivityResult> results) =>
-      results.any((r) =>
-          r == ConnectivityResult.wifi ||
-          r == ConnectivityResult.mobile ||
-          r == ConnectivityResult.ethernet);
+  static bool _isOnline(List<ConnectivityResult> results) => results.any(
+    (r) =>
+        r == ConnectivityResult.wifi ||
+        r == ConnectivityResult.mobile ||
+        r == ConnectivityResult.ethernet,
+  );
 }

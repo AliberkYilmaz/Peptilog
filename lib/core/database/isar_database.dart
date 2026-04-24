@@ -16,7 +16,10 @@ class IsarDatabase {
   static Isar? _instance;
 
   static Isar get instance {
-    assert(_instance != null, 'IsarDatabase.open() must be called before accessing instance');
+    assert(
+      _instance != null,
+      'IsarDatabase.open() must be called before accessing instance',
+    );
     return _instance!;
   }
 

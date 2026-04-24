@@ -12,8 +12,8 @@ class IsarPeptideRepository implements PeptideRepository {
     this._isar, {
     void Function()? onMutated,
     String? Function()? getCurrentUserId,
-  })  : _onMutated = onMutated,
-        _getCurrentUserId = getCurrentUserId;
+  }) : _onMutated = onMutated,
+       _getCurrentUserId = getCurrentUserId;
 
   @override
   Future<List<Peptide>> getAll() => _isar.peptides.where().findAll();

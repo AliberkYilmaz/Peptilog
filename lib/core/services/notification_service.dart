@@ -72,14 +72,16 @@ class NotificationService {
     if (Platform.isIOS) {
       final granted = await _plugin
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
+            IOSFlutterLocalNotificationsPlugin
+          >()
           ?.requestPermissions(alert: true, badge: true, sound: true);
       return granted ?? false;
     }
     if (Platform.isAndroid) {
       final granted = await _plugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.requestNotificationsPermission();
       return granted ?? false;
     }
@@ -161,8 +163,7 @@ class NotificationService {
 
   /// Builds a unique Android/iOS notification int ID from the reminder's
   /// Isar [id] and the target ISO [weekday] (1-7).
-  static int notifId(int id, int weekday) =>
-      (id.abs() % 100000) * 10 + weekday;
+  static int notifId(int id, int weekday) => (id.abs() % 100000) * 10 + weekday;
 
   /// Returns the next [tz.TZDateTime] for the given ISO [weekday] (1=Mon),
   /// [hour], and [minute] in the device's local timezone.

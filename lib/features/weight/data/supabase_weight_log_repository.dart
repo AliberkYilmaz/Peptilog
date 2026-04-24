@@ -17,10 +17,9 @@ class SupabaseWeightLogRepository implements SupabaseSyncRepo<WeightLog> {
     for (final r in records) {
       r.supabaseId ??= _uuid.v4();
     }
-    await _client.from(_table).upsert(
-          records.map(_toJson).toList(),
-          onConflict: 'id',
-        );
+    await _client
+        .from(_table)
+        .upsert(records.map(_toJson).toList(), onConflict: 'id');
   }
 
   @override
@@ -34,14 +33,14 @@ class SupabaseWeightLogRepository implements SupabaseSyncRepo<WeightLog> {
   }
 
   static Map<String, dynamic> _toJson(WeightLog r) => {
-        'id': r.supabaseId,
-        'user_id': r.userId,
-        'weight_kg': r.weightKg,
-        'date': r.date.toUtc().toIso8601String(),
-        'created_at': r.createdAt.toUtc().toIso8601String(),
-        'updated_at': r.updatedAt.toUtc().toIso8601String(),
-        'is_deleted': r.isDeleted,
-      };
+    'id': r.supabaseId,
+    'user_id': r.userId,
+    'weight_kg': r.weightKg,
+    'date': r.date.toUtc().toIso8601String(),
+    'created_at': r.createdAt.toUtc().toIso8601String(),
+    'updated_at': r.updatedAt.toUtc().toIso8601String(),
+    'is_deleted': r.isDeleted,
+  };
 
   static WeightLog _fromJson(Map<String, dynamic> json) {
     final log = WeightLog()

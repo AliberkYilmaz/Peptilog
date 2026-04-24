@@ -18,10 +18,9 @@ class SupabaseBloodPressureLogRepository
     for (final r in records) {
       r.supabaseId ??= _uuid.v4();
     }
-    await _client.from(_table).upsert(
-          records.map(_toJson).toList(),
-          onConflict: 'id',
-        );
+    await _client
+        .from(_table)
+        .upsert(records.map(_toJson).toList(), onConflict: 'id');
   }
 
   @override
@@ -38,16 +37,16 @@ class SupabaseBloodPressureLogRepository
   }
 
   static Map<String, dynamic> _toJson(BloodPressureLog r) => {
-        'id': r.supabaseId,
-        'user_id': r.userId,
-        'systolic': r.systolic,
-        'diastolic': r.diastolic,
-        'pulse': r.pulse,
-        'measured_at': r.measuredAt.toUtc().toIso8601String(),
-        'created_at': r.createdAt.toUtc().toIso8601String(),
-        'updated_at': r.updatedAt.toUtc().toIso8601String(),
-        'is_deleted': r.isDeleted,
-      };
+    'id': r.supabaseId,
+    'user_id': r.userId,
+    'systolic': r.systolic,
+    'diastolic': r.diastolic,
+    'pulse': r.pulse,
+    'measured_at': r.measuredAt.toUtc().toIso8601String(),
+    'created_at': r.createdAt.toUtc().toIso8601String(),
+    'updated_at': r.updatedAt.toUtc().toIso8601String(),
+    'is_deleted': r.isDeleted,
+  };
 
   static BloodPressureLog _fromJson(Map<String, dynamic> json) {
     final log = BloodPressureLog()

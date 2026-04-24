@@ -17,10 +17,9 @@ class SupabaseReminderRepository implements SupabaseSyncRepo<Reminder> {
     for (final r in records) {
       r.supabaseId ??= _uuid.v4();
     }
-    await _client.from(_table).upsert(
-          records.map(_toJson).toList(),
-          onConflict: 'id',
-        );
+    await _client
+        .from(_table)
+        .upsert(records.map(_toJson).toList(), onConflict: 'id');
   }
 
   @override
@@ -34,15 +33,15 @@ class SupabaseReminderRepository implements SupabaseSyncRepo<Reminder> {
   }
 
   static Map<String, dynamic> _toJson(Reminder r) => {
-        'id': r.supabaseId,
-        'user_id': r.userId,
-        'peptide_id': r.peptideId,
-        'days_of_week': r.daysOfWeek,
-        'time': r.time,
-        'is_active': r.isActive,
-        'updated_at': r.updatedAt.toUtc().toIso8601String(),
-        'is_deleted': r.isDeleted,
-      };
+    'id': r.supabaseId,
+    'user_id': r.userId,
+    'peptide_id': r.peptideId,
+    'days_of_week': r.daysOfWeek,
+    'time': r.time,
+    'is_active': r.isActive,
+    'updated_at': r.updatedAt.toUtc().toIso8601String(),
+    'is_deleted': r.isDeleted,
+  };
 
   static Reminder _fromJson(Map<String, dynamic> json) => Reminder()
     ..supabaseId = json['id'] as String?

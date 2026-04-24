@@ -170,10 +170,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
               const SizedBox(height: 12),
               Text(
                 _errorText!,
-                style: GoogleFonts.inter(
-                  color: AppTheme.error,
-                  fontSize: 13,
-                ),
+                style: GoogleFonts.inter(color: AppTheme.error, fontSize: 13),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -264,9 +261,7 @@ class _NumericField extends StatelessWidget {
     return TextField(
       controller: controller,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-      ],
+      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
       onChanged: onChanged,
       style: GoogleFonts.inter(color: AppTheme.onBackground, fontSize: 15),
       decoration: InputDecoration(
@@ -323,10 +318,7 @@ class _PeptideDropdown extends StatelessWidget {
           value: selected,
           isExpanded: true,
           dropdownColor: AppTheme.surface,
-          style: GoogleFonts.inter(
-            color: AppTheme.onBackground,
-            fontSize: 14,
-          ),
+          style: GoogleFonts.inter(color: AppTheme.onBackground, fontSize: 14),
           hint: Text(
             'Select peptide (optional)',
             style: GoogleFonts.inter(
@@ -336,10 +328,7 @@ class _PeptideDropdown extends StatelessWidget {
           ),
           items: peptides
               .map(
-                (p) => DropdownMenuItem<Peptide>(
-                  value: p,
-                  child: Text(p.name),
-                ),
+                (p) => DropdownMenuItem<Peptide>(value: p, child: Text(p.name)),
               )
               .toList(),
           onChanged: onChanged,

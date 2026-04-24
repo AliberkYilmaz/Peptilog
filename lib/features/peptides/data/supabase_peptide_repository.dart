@@ -17,10 +17,9 @@ class SupabasePeptideRepository implements SupabaseSyncRepo<Peptide> {
     for (final r in records) {
       r.supabaseId ??= _uuid.v4();
     }
-    await _client.from(_table).upsert(
-          records.map(_toJson).toList(),
-          onConflict: 'id',
-        );
+    await _client
+        .from(_table)
+        .upsert(records.map(_toJson).toList(), onConflict: 'id');
   }
 
   @override
@@ -34,16 +33,16 @@ class SupabasePeptideRepository implements SupabaseSyncRepo<Peptide> {
   }
 
   static Map<String, dynamic> _toJson(Peptide r) => {
-        'id': r.supabaseId,
-        'user_id': r.userId,
-        'name': r.name,
-        'color': r.color,
-        'unit': r.unit,
-        'is_active': r.isActive,
-        'is_custom': r.isCustom,
-        'updated_at': r.updatedAt.toUtc().toIso8601String(),
-        'is_deleted': r.isDeleted,
-      };
+    'id': r.supabaseId,
+    'user_id': r.userId,
+    'name': r.name,
+    'color': r.color,
+    'unit': r.unit,
+    'is_active': r.isActive,
+    'is_custom': r.isCustom,
+    'updated_at': r.updatedAt.toUtc().toIso8601String(),
+    'is_deleted': r.isDeleted,
+  };
 
   static Peptide _fromJson(Map<String, dynamic> json) => Peptide()
     ..supabaseId = json['id'] as String?

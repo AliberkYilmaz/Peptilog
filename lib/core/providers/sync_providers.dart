@@ -22,10 +22,9 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
 
 final _supabaseInjectionLogRepoProvider =
     Provider<SupabaseInjectionLogRepository>(
-  (ref) => SupabaseInjectionLogRepository(
-    ref.watch(supabaseClientProvider),
-  ),
-);
+      (ref) =>
+          SupabaseInjectionLogRepository(ref.watch(supabaseClientProvider)),
+    );
 
 final _supabasePeptideRepoProvider = Provider<SupabasePeptideRepository>(
   (ref) => SupabasePeptideRepository(ref.watch(supabaseClientProvider)),
@@ -41,10 +40,9 @@ final _supabaseSleepLogRepoProvider = Provider<SupabaseSleepLogRepository>(
 
 final _supabaseBloodPressureLogRepoProvider =
     Provider<SupabaseBloodPressureLogRepository>(
-  (ref) => SupabaseBloodPressureLogRepository(
-    ref.watch(supabaseClientProvider),
-  ),
-);
+      (ref) =>
+          SupabaseBloodPressureLogRepository(ref.watch(supabaseClientProvider)),
+    );
 
 final _supabaseReminderRepoProvider = Provider<SupabaseReminderRepository>(
   (ref) => SupabaseReminderRepository(ref.watch(supabaseClientProvider)),

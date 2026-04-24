@@ -12,8 +12,8 @@ class IsarBloodPressureLogRepository implements BloodPressureLogRepository {
     this._isar, {
     void Function()? onMutated,
     String? Function()? getCurrentUserId,
-  })  : _onMutated = onMutated,
-        _getCurrentUserId = getCurrentUserId;
+  }) : _onMutated = onMutated,
+       _getCurrentUserId = getCurrentUserId;
 
   @override
   Future<List<BloodPressureLog>> getAll() =>
@@ -27,8 +27,7 @@ class IsarBloodPressureLogRepository implements BloodPressureLogRepository {
     log
       ..userId ??= _getCurrentUserId?.call()
       ..updatedAt = DateTime.now();
-    final result =
-        await _isar.writeTxn(() => _isar.bloodPressureLogs.put(log));
+    final result = await _isar.writeTxn(() => _isar.bloodPressureLogs.put(log));
     _onMutated?.call();
     return result;
   }

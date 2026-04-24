@@ -122,7 +122,8 @@ class _ReminderFormSheetState extends ConsumerState<ReminderFormSheet> {
     final reminder = widget.reminder ?? Reminder();
     reminder
       ..peptideId = _selectedPeptideId!
-      ..daysOfWeek = _selectedDays.toList()
+      ..daysOfWeek = _selectedDays
+          .toList()
           .sorted()
           .map((d) => d.toString())
           .join(',')
@@ -363,7 +364,11 @@ class _ReminderFormSheetState extends ConsumerState<ReminderFormSheet> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.access_time, color: AppTheme.amber, size: 18),
+                  const Icon(
+                    Icons.access_time,
+                    color: AppTheme.amber,
+                    size: 18,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     _time.format(context),
@@ -478,10 +483,7 @@ class _PeptideDropdown extends StatelessWidget {
           ),
           items: peptides
               .map(
-                (p) => DropdownMenuItem<int>(
-                  value: p.id,
-                  child: Text(p.name),
-                ),
+                (p) => DropdownMenuItem<int>(value: p.id, child: Text(p.name)),
               )
               .toList(),
           onChanged: onChanged,

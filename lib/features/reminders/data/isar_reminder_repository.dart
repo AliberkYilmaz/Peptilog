@@ -12,8 +12,8 @@ class IsarReminderRepository implements ReminderRepository {
     this._isar, {
     void Function()? onMutated,
     String? Function()? getCurrentUserId,
-  })  : _onMutated = onMutated,
-        _getCurrentUserId = getCurrentUserId;
+  }) : _onMutated = onMutated,
+       _getCurrentUserId = getCurrentUserId;
 
   @override
   Future<List<Reminder>> getAll() => _isar.reminders.where().findAll();
@@ -32,8 +32,7 @@ class IsarReminderRepository implements ReminderRepository {
   @override
   Future<int> save(Reminder reminder) async {
     reminder.userId ??= _getCurrentUserId?.call();
-    final result =
-        await _isar.writeTxn(() => _isar.reminders.put(reminder));
+    final result = await _isar.writeTxn(() => _isar.reminders.put(reminder));
     _onMutated?.call();
     return result;
   }

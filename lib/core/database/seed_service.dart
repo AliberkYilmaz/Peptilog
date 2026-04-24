@@ -11,8 +11,8 @@ class SeedService {
 
   static const _presets = [
     _PresetPeptide(name: 'Tirzepatide', color: '#7B61FF', unit: 'mg'),
-    _PresetPeptide(name: 'GHK-Cu',      color: '#3A86FF', unit: 'mg'),
-    _PresetPeptide(name: 'NAD+',        color: '#2EC4B6', unit: 'mg'),
+    _PresetPeptide(name: 'GHK-Cu', color: '#3A86FF', unit: 'mg'),
+    _PresetPeptide(name: 'NAD+', color: '#2EC4B6', unit: 'mg'),
     _PresetPeptide(name: 'Retatrutide', color: '#FB5607', unit: 'mg'),
     _PresetPeptide(name: 'Tesamorelin', color: '#FFBE0B', unit: 'mg'),
   ];
@@ -51,5 +51,9 @@ class _PresetPeptide {
   final String name;
   final String color;
   final String unit;
-  const _PresetPeptide({required this.name, required this.color, required this.unit});
+  const _PresetPeptide({
+    required this.name,
+    required this.color,
+    required this.unit,
+  });
 }

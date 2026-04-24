@@ -32,41 +32,25 @@ const BloodPressureLogSchema = CollectionSchema(
       name: r'isDeleted',
       type: IsarType.bool,
     ),
-    r'isDirty': PropertySchema(
-      id: 3,
-      name: r'isDirty',
-      type: IsarType.bool,
-    ),
+    r'isDirty': PropertySchema(id: 3, name: r'isDirty', type: IsarType.bool),
     r'measuredAt': PropertySchema(
       id: 4,
       name: r'measuredAt',
       type: IsarType.dateTime,
     ),
-    r'pulse': PropertySchema(
-      id: 5,
-      name: r'pulse',
-      type: IsarType.long,
-    ),
+    r'pulse': PropertySchema(id: 5, name: r'pulse', type: IsarType.long),
     r'supabaseId': PropertySchema(
       id: 6,
       name: r'supabaseId',
       type: IsarType.string,
     ),
-    r'systolic': PropertySchema(
-      id: 7,
-      name: r'systolic',
-      type: IsarType.long,
-    ),
+    r'systolic': PropertySchema(id: 7, name: r'systolic', type: IsarType.long),
     r'updatedAt': PropertySchema(
       id: 8,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
-    r'userId': PropertySchema(
-      id: 9,
-      name: r'userId',
-      type: IsarType.string,
-    )
+    r'userId': PropertySchema(id: 9, name: r'userId', type: IsarType.string),
   },
   estimateSize: _bloodPressureLogEstimateSize,
   serialize: _bloodPressureLogSerialize,
@@ -183,7 +167,10 @@ List<IsarLinkBase<dynamic>> _bloodPressureLogGetLinks(BloodPressureLog object) {
 }
 
 void _bloodPressureLogAttach(
-    IsarCollection<dynamic> col, Id id, BloodPressureLog object) {
+  IsarCollection<dynamic> col,
+  Id id,
+  BloodPressureLog object,
+) {
   object.id = id;
 }
 
@@ -199,17 +186,15 @@ extension BloodPressureLogQueryWhereSort
 extension BloodPressureLogQueryWhere
     on QueryBuilder<BloodPressureLog, BloodPressureLog, QWhereClause> {
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterWhereClause> idEqualTo(
-      Id id) {
+    Id id,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterWhereClause>
-      idNotEqualTo(Id id) {
+  idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -232,7 +217,7 @@ extension BloodPressureLogQueryWhere
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterWhereClause>
-      idGreaterThan(Id id, {bool include = false}) {
+  idGreaterThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -241,7 +226,7 @@ extension BloodPressureLogQueryWhere
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterWhereClause>
-      idLessThan(Id id, {bool include = false}) {
+  idLessThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -256,12 +241,14 @@ extension BloodPressureLogQueryWhere
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
@@ -269,389 +256,385 @@ extension BloodPressureLogQueryWhere
 extension BloodPressureLogQueryFilter
     on QueryBuilder<BloodPressureLog, BloodPressureLog, QFilterCondition> {
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      createdAtEqualTo(DateTime value) {
+  createdAtEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'createdAt', value: value),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      createdAtGreaterThan(
-    DateTime value, {
-    bool include = false,
-  }) {
+  createdAtGreaterThan(DateTime value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'createdAt',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      createdAtLessThan(
-    DateTime value, {
-    bool include = false,
-  }) {
+  createdAtLessThan(DateTime value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'createdAt',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      createdAtBetween(
+  createdAtBetween(
     DateTime lower,
     DateTime upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'createdAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'createdAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      diastolicEqualTo(int value) {
+  diastolicEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'diastolic',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'diastolic', value: value),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      diastolicGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+  diastolicGreaterThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'diastolic',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'diastolic',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      diastolicLessThan(
-    int value, {
-    bool include = false,
-  }) {
+  diastolicLessThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'diastolic',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'diastolic',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      diastolicBetween(
+  diastolicBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'diastolic',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'diastolic',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      idEqualTo(Id value) {
+  idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      idGreaterThan(
-    Id value, {
-    bool include = false,
-  }) {
+  idGreaterThan(Id value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      idLessThan(
-    Id value, {
-    bool include = false,
-  }) {
+  idLessThan(Id value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      idBetween(
+  idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      isDeletedEqualTo(bool value) {
+  isDeletedEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isDeleted',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isDeleted', value: value),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      isDirtyEqualTo(bool value) {
+  isDirtyEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isDirty',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isDirty', value: value),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      measuredAtEqualTo(DateTime value) {
+  measuredAtEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'measuredAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'measuredAt', value: value),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      measuredAtGreaterThan(
-    DateTime value, {
-    bool include = false,
-  }) {
+  measuredAtGreaterThan(DateTime value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'measuredAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'measuredAt',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      measuredAtLessThan(
-    DateTime value, {
-    bool include = false,
-  }) {
+  measuredAtLessThan(DateTime value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'measuredAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'measuredAt',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      measuredAtBetween(
+  measuredAtBetween(
     DateTime lower,
     DateTime upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'measuredAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'measuredAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      pulseIsNull() {
+  pulseIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'pulse',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'pulse'),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      pulseIsNotNull() {
+  pulseIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'pulse',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'pulse'),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      pulseEqualTo(int? value) {
+  pulseEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'pulse',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'pulse', value: value),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      pulseGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  pulseGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'pulse',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'pulse',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      pulseLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  pulseLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'pulse',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'pulse',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      pulseBetween(
+  pulseBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'pulse',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'pulse',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      supabaseIdIsNull() {
+  supabaseIdIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'supabaseId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'supabaseId'),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      supabaseIdIsNotNull() {
+  supabaseIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'supabaseId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'supabaseId'),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      supabaseIdEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  supabaseIdEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'supabaseId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'supabaseId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      supabaseIdGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'supabaseId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      supabaseIdLessThan(
+  supabaseIdGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'supabaseId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'supabaseId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      supabaseIdBetween(
+  supabaseIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'supabaseId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
+  supabaseIdBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -659,265 +642,268 @@ extension BloodPressureLogQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'supabaseId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'supabaseId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      supabaseIdStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  supabaseIdStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'supabaseId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'supabaseId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      supabaseIdEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  supabaseIdEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'supabaseId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'supabaseId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      supabaseIdContains(String value, {bool caseSensitive = true}) {
+  supabaseIdContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'supabaseId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'supabaseId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      supabaseIdMatches(String pattern, {bool caseSensitive = true}) {
+  supabaseIdMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'supabaseId',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'supabaseId',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      supabaseIdIsEmpty() {
+  supabaseIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'supabaseId',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'supabaseId', value: ''),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      supabaseIdIsNotEmpty() {
+  supabaseIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'supabaseId',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'supabaseId', value: ''),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      systolicEqualTo(int value) {
+  systolicEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'systolic',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'systolic', value: value),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      systolicGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+  systolicGreaterThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'systolic',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'systolic',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      systolicLessThan(
-    int value, {
-    bool include = false,
-  }) {
+  systolicLessThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'systolic',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'systolic',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      systolicBetween(
+  systolicBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'systolic',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'systolic',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      updatedAtEqualTo(DateTime value) {
+  updatedAtEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'updatedAt', value: value),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      updatedAtGreaterThan(
-    DateTime value, {
-    bool include = false,
-  }) {
+  updatedAtGreaterThan(DateTime value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'updatedAt',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      updatedAtLessThan(
-    DateTime value, {
-    bool include = false,
-  }) {
+  updatedAtLessThan(DateTime value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'updatedAt',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      updatedAtBetween(
+  updatedAtBetween(
     DateTime lower,
     DateTime upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'updatedAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'updatedAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      userIdIsNull() {
+  userIdIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'userId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'userId'),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      userIdIsNotNull() {
+  userIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'userId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'userId'),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      userIdEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  userIdEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'userId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'userId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      userIdGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'userId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      userIdLessThan(
+  userIdGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'userId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'userId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      userIdBetween(
+  userIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'userId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
+  userIdBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -925,84 +911,86 @@ extension BloodPressureLogQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'userId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'userId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      userIdStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  userIdStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'userId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'userId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      userIdEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  userIdEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'userId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'userId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      userIdContains(String value, {bool caseSensitive = true}) {
+  userIdContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'userId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'userId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      userIdMatches(String pattern, {bool caseSensitive = true}) {
+  userIdMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'userId',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'userId',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      userIdIsEmpty() {
+  userIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'userId',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'userId', value: ''),
+      );
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterFilterCondition>
-      userIdIsNotEmpty() {
+  userIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'userId',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'userId', value: ''),
+      );
     });
   }
 }
@@ -1016,70 +1004,70 @@ extension BloodPressureLogQueryLinks
 extension BloodPressureLogQuerySortBy
     on QueryBuilder<BloodPressureLog, BloodPressureLog, QSortBy> {
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByCreatedAt() {
+  sortByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByCreatedAtDesc() {
+  sortByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByDiastolic() {
+  sortByDiastolic() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'diastolic', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByDiastolicDesc() {
+  sortByDiastolicDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'diastolic', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByIsDeleted() {
+  sortByIsDeleted() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDeleted', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByIsDeletedDesc() {
+  sortByIsDeletedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDeleted', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByIsDirty() {
+  sortByIsDirty() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDirty', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByIsDirtyDesc() {
+  sortByIsDirtyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDirty', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByMeasuredAt() {
+  sortByMeasuredAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'measuredAt', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByMeasuredAtDesc() {
+  sortByMeasuredAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'measuredAt', Sort.desc);
     });
@@ -1092,63 +1080,63 @@ extension BloodPressureLogQuerySortBy
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByPulseDesc() {
+  sortByPulseDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'pulse', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortBySupabaseId() {
+  sortBySupabaseId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'supabaseId', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortBySupabaseIdDesc() {
+  sortBySupabaseIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'supabaseId', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortBySystolic() {
+  sortBySystolic() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'systolic', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortBySystolicDesc() {
+  sortBySystolicDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'systolic', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByUpdatedAt() {
+  sortByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByUpdatedAtDesc() {
+  sortByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByUserId() {
+  sortByUserId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'userId', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      sortByUserIdDesc() {
+  sortByUserIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'userId', Sort.desc);
     });
@@ -1158,28 +1146,28 @@ extension BloodPressureLogQuerySortBy
 extension BloodPressureLogQuerySortThenBy
     on QueryBuilder<BloodPressureLog, BloodPressureLog, QSortThenBy> {
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByCreatedAt() {
+  thenByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByCreatedAtDesc() {
+  thenByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByDiastolic() {
+  thenByDiastolic() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'diastolic', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByDiastolicDesc() {
+  thenByDiastolicDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'diastolic', Sort.desc);
     });
@@ -1192,49 +1180,49 @@ extension BloodPressureLogQuerySortThenBy
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByIdDesc() {
+  thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByIsDeleted() {
+  thenByIsDeleted() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDeleted', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByIsDeletedDesc() {
+  thenByIsDeletedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDeleted', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByIsDirty() {
+  thenByIsDirty() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDirty', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByIsDirtyDesc() {
+  thenByIsDirtyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDirty', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByMeasuredAt() {
+  thenByMeasuredAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'measuredAt', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByMeasuredAtDesc() {
+  thenByMeasuredAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'measuredAt', Sort.desc);
     });
@@ -1247,63 +1235,63 @@ extension BloodPressureLogQuerySortThenBy
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByPulseDesc() {
+  thenByPulseDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'pulse', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenBySupabaseId() {
+  thenBySupabaseId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'supabaseId', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenBySupabaseIdDesc() {
+  thenBySupabaseIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'supabaseId', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenBySystolic() {
+  thenBySystolic() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'systolic', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenBySystolicDesc() {
+  thenBySystolicDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'systolic', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByUpdatedAt() {
+  thenByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByUpdatedAtDesc() {
+  thenByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByUserId() {
+  thenByUserId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'userId', Sort.asc);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QAfterSortBy>
-      thenByUserIdDesc() {
+  thenByUserIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'userId', Sort.desc);
     });
@@ -1313,70 +1301,71 @@ extension BloodPressureLogQuerySortThenBy
 extension BloodPressureLogQueryWhereDistinct
     on QueryBuilder<BloodPressureLog, BloodPressureLog, QDistinct> {
   QueryBuilder<BloodPressureLog, BloodPressureLog, QDistinct>
-      distinctByCreatedAt() {
+  distinctByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'createdAt');
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QDistinct>
-      distinctByDiastolic() {
+  distinctByDiastolic() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'diastolic');
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QDistinct>
-      distinctByIsDeleted() {
+  distinctByIsDeleted() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isDeleted');
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QDistinct>
-      distinctByIsDirty() {
+  distinctByIsDirty() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isDirty');
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QDistinct>
-      distinctByMeasuredAt() {
+  distinctByMeasuredAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'measuredAt');
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QDistinct>
-      distinctByPulse() {
+  distinctByPulse() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'pulse');
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QDistinct>
-      distinctBySupabaseId({bool caseSensitive = true}) {
+  distinctBySupabaseId({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'supabaseId', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QDistinct>
-      distinctBySystolic() {
+  distinctBySystolic() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'systolic');
     });
   }
 
   QueryBuilder<BloodPressureLog, BloodPressureLog, QDistinct>
-      distinctByUpdatedAt() {
+  distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updatedAt');
     });
   }
 
-  QueryBuilder<BloodPressureLog, BloodPressureLog, QDistinct> distinctByUserId(
-      {bool caseSensitive = true}) {
+  QueryBuilder<BloodPressureLog, BloodPressureLog, QDistinct> distinctByUserId({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'userId', caseSensitive: caseSensitive);
     });
@@ -1392,7 +1381,7 @@ extension BloodPressureLogQueryProperty
   }
 
   QueryBuilder<BloodPressureLog, DateTime, QQueryOperations>
-      createdAtProperty() {
+  createdAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'createdAt');
     });
@@ -1417,7 +1406,7 @@ extension BloodPressureLogQueryProperty
   }
 
   QueryBuilder<BloodPressureLog, DateTime, QQueryOperations>
-      measuredAtProperty() {
+  measuredAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'measuredAt');
     });
@@ -1430,7 +1419,7 @@ extension BloodPressureLogQueryProperty
   }
 
   QueryBuilder<BloodPressureLog, String?, QQueryOperations>
-      supabaseIdProperty() {
+  supabaseIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'supabaseId');
     });
@@ -1443,7 +1432,7 @@ extension BloodPressureLogQueryProperty
   }
 
   QueryBuilder<BloodPressureLog, DateTime, QQueryOperations>
-      updatedAtProperty() {
+  updatedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'updatedAt');
     });
