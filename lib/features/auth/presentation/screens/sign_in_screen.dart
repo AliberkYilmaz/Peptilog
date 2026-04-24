@@ -166,8 +166,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         ),
                       ),
                       validator: (v) {
-                        if (v == null || v.isEmpty)
+                        if (v == null || v.isEmpty) {
                           return 'Enter your password';
+                        }
                         return null;
                       },
                     ),

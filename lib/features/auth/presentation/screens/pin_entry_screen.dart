@@ -90,8 +90,9 @@ class _PinEntryScreenState extends ConsumerState<PinEntryScreen> {
   }
 
   IconData get _biometricIcon {
-    if (_biometricTypes.contains(BiometricType.face))
+    if (_biometricTypes.contains(BiometricType.face)) {
       return Icons.face_outlined;
+    }
     return Icons.fingerprint;
   }
 
