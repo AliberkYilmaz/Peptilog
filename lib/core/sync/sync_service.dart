@@ -15,6 +15,7 @@ import '../../features/weight/data/supabase_weight_log_repository.dart';
 import '../../features/weight/domain/weight_log.dart';
 
 const _kLastSyncKey = 'sync.lastSyncAt';
+const _kFirstSyncDoneKey = 'sync.firstSyncDone';
 
 /// Orchestrates the full offline-first sync cycle for all entities.
 ///
@@ -62,6 +63,9 @@ class SyncService {
   Future<void> _setLastSyncAt(DateTime dt) =>
       _prefs.setString(_kLastSyncKey, dt.toUtc().toIso8601String());
 
+  bool get isFirstSyncNeeded =>
+      !(_prefs.getBool(_kFirstSyncDoneKey) ?? false);
+
   // ---------------------------------------------------------------------------
   // Public API
   // ---------------------------------------------------------------------------
@@ -78,6 +82,43 @@ class SyncService {
       syncReminders(userId),
     ]);
     await _setLastSyncAt(syncStart);
+  }
+
+  /// First-device / fresh-install setup. Clears local Isar data, pulls ALL
+  /// records from Supabase for [userId], and marks setup complete so subsequent
+  /// launches skip the full pull.
+  Future<void> firstDeviceSetup(String userId) async {
+    // 1. Wipe local data to avoid stale data from a previous install.
+    await _isar.writeTxn(() => _isar.clear());
+
+    // 2. Pull ALL records (epoch 0 ≡ "since forever").
+    final epoch = DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
+    final results = await Future.wait([
+      _injectionLogRepo.pullSince(epoch, userId),
+      _peptideRepo.pullSince(epoch, userId),
+      _weightLogRepo.pullSince(epoch, userId),
+      _sleepLogRepo.pullSince(epoch, userId),
+      _bloodPressureLogRepo.pullSince(epoch, userId),
+      _reminderRepo.pullSince(epoch, userId),
+    ]);
+
+    // 3. Write pulled records to Isar with isDirty = false.
+    await _isar.writeTxn(() async {
+      await _isar.injectionLogs.putAll(results[0] as List<InjectionLog>);
+      await _isar.peptides.putAll(results[1] as List<Peptide>);
+      await _isar.weightLogs.putAll(results[2] as List<WeightLog>);
+      await _isar.sleepLogs.putAll(results[3] as List<SleepLog>);
+      await _isar.bloodPressureLogs
+          .putAll(results[4] as List<BloodPressureLog>);
+      await _isar.reminders.putAll(results[5] as List<Reminder>);
+    });
+
+    // 4. Mark setup done.
+    final now = DateTime.now().toUtc();
+    await Future.wait([
+      _prefs.setBool(_kFirstSyncDoneKey, true),
+      _setLastSyncAt(now),
+    ]);
   }
 
   Future<void> syncInjectionLogs(String userId) async {
