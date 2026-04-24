@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../calendar/presentation/screens/calendar_body.dart';
 import '../../../injection_log/presentation/screens/quick_log_body.dart';
 
 /// Main app shell with 5-tab bottom navigation.
@@ -44,10 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: IndexedStack(
         index: _currentTab,
         children: const [
-          _PlaceholderTab(
-            icon: Icons.calendar_today_outlined,
-            label: 'Calendar',
-          ),
+          CalendarBody(),
           QuickLogBody(),
           _PlaceholderTab(icon: Icons.monitor_weight_outlined, label: 'Weight'),
           _PlaceholderTab(icon: Icons.favorite_border, label: 'Health'),
