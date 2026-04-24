@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../dashboard/presentation/providers/dashboard_providers.dart';
 import '../providers/quick_log_notifier.dart';
 import '../widgets/peptide_selector.dart';
 
@@ -50,6 +51,9 @@ class _QuickLogBodyState extends ConsumerState<QuickLogBody> {
       _doseController.clear();
       _notesController.clear();
       ref.read(quickLogProvider.notifier).reset();
+
+      // Return to Calendar tab so the new dot appears immediately.
+      ref.read(selectedTabProvider.notifier).state = 0;
     });
 
     final state = ref.watch(quickLogProvider);

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../dashboard/presentation/providers/dashboard_providers.dart';
 import '../providers/calendar_provider.dart';
 import 'injection_log_tile.dart';
 
@@ -87,12 +88,29 @@ class DayDetailSheet extends ConsumerWidget {
             Expanded(
               child: logs.isEmpty
                   ? Center(
-                      child: Text(
-                        'No injections recorded on this day.',
-                        style: TextStyle(
-                          color: AppTheme.onSurface.withAlpha(128),
-                          fontSize: 14,
-                        ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'No injections logged',
+                            style: TextStyle(
+                              color: AppTheme.onSurface.withAlpha(128),
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          FilledButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              ref.read(selectedTabProvider.notifier).state = 1;
+                            },
+                            style: FilledButton.styleFrom(
+                              backgroundColor: AppTheme.amber,
+                              foregroundColor: const Color(0xFF1A1714),
+                            ),
+                            child: const Text('Log Injection'),
+                          ),
+                        ],
                       ),
                     )
                   : ListView.separated(

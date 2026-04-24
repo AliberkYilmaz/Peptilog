@@ -1,33 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../calendar/presentation/screens/calendar_body.dart';
 import '../../../injection_log/presentation/screens/quick_log_body.dart';
+import '../providers/dashboard_providers.dart';
 
 /// Main app shell with 5-tab bottom navigation.
 ///
 /// Tab layout (per §5 of SPEC):
-///   0 — Calendar  (placeholder, FAB navigates to Log tab)
+///   0 — Calendar  (table_calendar + day detail sheet)
 ///   1 — Log       (Quick Log form)
 ///   2 — Weight    (placeholder)
 ///   3 — Health    (placeholder)
 ///   4 — Profile   (placeholder)
-class DashboardScreen extends StatefulWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key, this.initialTab = 0});
 
   final int initialTab;
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
-  late int _currentTab;
-
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    _currentTab = widget.initialTab;
+    if (widget.initialTab != 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(selectedTabProvider.notifier).state = widget.initialTab;
+      });
+    }
   }
 
   static const _titles = [
@@ -40,10 +44,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentTab = ref.watch(selectedTabProvider);
+
     return Scaffold(
-      appBar: AppBar(title: Text(_titles[_currentTab])),
+      appBar: AppBar(title: Text(_titles[currentTab])),
       body: IndexedStack(
-        index: _currentTab,
+        index: currentTab,
         children: const [
           CalendarBody(),
           QuickLogBody(),
@@ -53,8 +59,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentTab,
-        onDestinationSelected: (i) => setState(() => _currentTab = i),
+        selectedIndex: currentTab,
+        onDestinationSelected: (i) =>
+            ref.read(selectedTabProvider.notifier).state = i,
         backgroundColor: AppTheme.surface,
         indicatorColor: AppTheme.amber.withAlpha(51),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
@@ -86,10 +93,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      // FAB on Calendar tab — taps to Log tab for quick access.
-      floatingActionButton: _currentTab == 0
+      // FAB on Calendar tab — navigates to the Log tab for quick access.
+      floatingActionButton: currentTab == 0
           ? FloatingActionButton(
-              onPressed: () => setState(() => _currentTab = 1),
+              onPressed: () =>
+                  ref.read(selectedTabProvider.notifier).state = 1,
               backgroundColor: AppTheme.amber,
               foregroundColor: const Color(0xFF1A1714),
               child: const Icon(Icons.add),
