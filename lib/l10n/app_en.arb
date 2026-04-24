@@ -79,5 +79,14 @@
   "reminderErrorSelectDay": "Select at least one day",
 
   "healthTabSleep": "Sleep",
-  "healthTabBloodPressure": "Blood Pressure"
+  "healthTabBloodPressure": "Blood Pressure",
+
+  "medicalDisclaimerTitle": "Medical Disclaimer",
+  "medicalDisclaimerIntro": "Peptilog is a personal tracking tool, not a medical device or clinical service.",
+  "medicalDisclaimerBullet1": "Nothing in this app constitutes medical advice, diagnosis, or treatment.",
+  "medicalDisclaimerBullet2": "Always consult a qualified healthcare provider before starting or changing any protocol.",
+  "medicalDisclaimerBullet3": "Peptide compounds may be regulated or restricted in your jurisdiction. You are solely responsible for legal compliance.",
+  "medicalDisclaimerBullet4": "In a medical emergency call your local emergency services immediately.",
+  "medicalDisclaimerFinePrint": "By tapping \"I understand\" you acknowledge that you have read this disclaimer and accept sole responsibility for your use of this application.",
+  "medicalDisclaimerAcceptButton": "I understand — continue"
 }

@@ -501,6 +501,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Blood Pressure'**
   String get healthTabBloodPressure;
+
+  /// No description provided for @medicalDisclaimerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Disclaimer'**
+  String get medicalDisclaimerTitle;
+
+  /// No description provided for @medicalDisclaimerIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Peptilog is a personal tracking tool, not a medical device or clinical service.'**
+  String get medicalDisclaimerIntro;
+
+  /// No description provided for @medicalDisclaimerBullet1.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing in this app constitutes medical advice, diagnosis, or treatment.'**
+  String get medicalDisclaimerBullet1;
+
+  /// No description provided for @medicalDisclaimerBullet2.
+  ///
+  /// In en, this message translates to:
+  /// **'Always consult a qualified healthcare provider before starting or changing any protocol.'**
+  String get medicalDisclaimerBullet2;
+
+  /// No description provided for @medicalDisclaimerBullet3.
+  ///
+  /// In en, this message translates to:
+  /// **'Peptide compounds may be regulated or restricted in your jurisdiction. You are solely responsible for legal compliance.'**
+  String get medicalDisclaimerBullet3;
+
+  /// No description provided for @medicalDisclaimerBullet4.
+  ///
+  /// In en, this message translates to:
+  /// **'In a medical emergency call your local emergency services immediately.'**
+  String get medicalDisclaimerBullet4;
+
+  /// No description provided for @medicalDisclaimerFinePrint.
+  ///
+  /// In en, this message translates to:
+  /// **'By tapping "I understand" you acknowledge that you have read this disclaimer and accept sole responsibility for your use of this application.'**
+  String get medicalDisclaimerFinePrint;
+
+  /// No description provided for @medicalDisclaimerAcceptButton.
+  ///
+  /// In en, this message translates to:
+  /// **'I understand — continue'**
+  String get medicalDisclaimerAcceptButton;
 }
 
 class _AppLocalizationsDelegate

@@ -14,6 +14,7 @@ class PinRepository {
   static const _biometricEnabledKey = 'peptilog_biometric_enabled';
   static const _onboardingSeenKey = 'peptilog_onboarding_seen';
   static const _gdprConsentKey = 'peptilog_gdpr_consent';
+  static const _medicalDisclaimerKey = 'peptilog_medical_disclaimer_seen';
 
   Future<bool> isPinSet() async {
     final value = await _storage.read(key: _pinSetKey);
@@ -66,6 +67,15 @@ class PinRepository {
       key: _gdprConsentKey,
       value: consented ? 'true' : 'false',
     );
+  }
+
+  Future<bool> hasMedicalDisclaimerSeen() async {
+    final value = await _storage.read(key: _medicalDisclaimerKey);
+    return value == 'true';
+  }
+
+  Future<void> markMedicalDisclaimerSeen() async {
+    await _storage.write(key: _medicalDisclaimerKey, value: 'true');
   }
 }
 

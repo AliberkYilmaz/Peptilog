@@ -6,12 +6,14 @@ import '../../features/auth/data/auth_providers.dart';
 import '../../features/auth/data/pin_repository.dart';
 import '../../features/auth/presentation/providers/pin_notifier.dart';
 import '../../features/auth/presentation/screens/gdpr_consent_screen.dart';
+import '../../features/auth/presentation/screens/medical_disclaimer_screen.dart';
 import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/pin_entry_screen.dart';
 import '../../features/auth/presentation/screens/pin_setup_screen.dart';
 import '../../features/auth/presentation/screens/sign_in_screen.dart';
 import '../../features/auth/presentation/screens/sign_up_screen.dart';
 import '../../features/analytics/presentation/screens/analytics_screen.dart';
+import '../../features/auth/presentation/screens/pin_change_screen.dart';
 import '../../features/calculator/calculator_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/order_calculator/order_calculator_screen.dart';
@@ -64,6 +66,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return loc == '/gdpr' ? null : '/gdpr';
       }
 
+      // --- Medical Disclaimer ---
+      final seenDisclaimer = await pinRepo.hasMedicalDisclaimerSeen();
+      if (!seenDisclaimer) {
+        return loc == '/medical-disclaimer' ? null : '/medical-disclaimer';
+      }
+
       // --- Onboarding ---
       final seenOnboarding = await pinRepo.hasSeenOnboarding();
       if (!seenOnboarding) {
@@ -108,6 +116,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const GdprConsentScreen(),
       ),
       GoRoute(
+        path: '/medical-disclaimer',
+        builder: (context, state) => const MedicalDisclaimerScreen(),
+      ),
+      GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),
       ),
@@ -126,6 +138,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/auth/pin-entry',
         builder: (context, state) => const PinEntryScreen(),
+      ),
+      GoRoute(
+        path: '/auth/pin-change',
+        builder: (context, state) => const PinChangeScreen(),
       ),
       GoRoute(
         path: '/dashboard',

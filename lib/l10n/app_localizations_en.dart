@@ -221,4 +221,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get healthTabBloodPressure => 'Blood Pressure';
+
+  @override
+  String get medicalDisclaimerTitle => 'Medical Disclaimer';
+
+  @override
+  String get medicalDisclaimerIntro =>
+      'Peptilog is a personal tracking tool, not a medical device or clinical service.';
+
+  @override
+  String get medicalDisclaimerBullet1 =>
+      'Nothing in this app constitutes medical advice, diagnosis, or treatment.';
+
+  @override
+  String get medicalDisclaimerBullet2 =>
+      'Always consult a qualified healthcare provider before starting or changing any protocol.';
+
+  @override
+  String get medicalDisclaimerBullet3 =>
+      'Peptide compounds may be regulated or restricted in your jurisdiction. You are solely responsible for legal compliance.';
+
+  @override
+  String get medicalDisclaimerBullet4 =>
+      'In a medical emergency call your local emergency services immediately.';
+
+  @override
+  String get medicalDisclaimerFinePrint =>
+      'By tapping \u201cI understand\u201d you acknowledge that you have read this disclaimer and accept sole responsibility for your use of this application.';
+
+  @override
+  String get medicalDisclaimerAcceptButton => 'I understand \u2014 continue';
 }
