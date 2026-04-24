@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/offline_banner.dart';
 import '../../../calendar/presentation/screens/calendar_body.dart';
 import '../../../injection_log/presentation/screens/quick_log_body.dart';
 import '../providers/dashboard_providers.dart';
@@ -58,46 +59,47 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           _PlaceholderTab(icon: Icons.person_outline, label: 'Profile'),
         ],
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: currentTab,
-        onDestinationSelected: (i) =>
-            ref.read(selectedTabProvider.notifier).state = i,
-        backgroundColor: AppTheme.surface,
-        indicatorColor: AppTheme.amber.withAlpha(51),
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.calendar_today_outlined),
-            selectedIcon: Icon(Icons.calendar_today, color: AppTheme.amber),
-            label: 'Calendar',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.add_circle_outline),
-            selectedIcon: Icon(Icons.add_circle, color: AppTheme.amber),
-            label: 'Log',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.monitor_weight_outlined),
-            selectedIcon: Icon(Icons.monitor_weight, color: AppTheme.amber),
-            label: 'Weight',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.favorite_border),
-            selectedIcon: Icon(Icons.favorite, color: AppTheme.amber),
-            label: 'Health',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person, color: AppTheme.amber),
-            label: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: OfflineBannerScaffold(
+        child: NavigationBar(
+          selectedIndex: currentTab,
+          onDestinationSelected: (i) =>
+              ref.read(selectedTabProvider.notifier).state = i,
+          backgroundColor: AppTheme.surface,
+          indicatorColor: AppTheme.amber.withAlpha(51),
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.calendar_today_outlined),
+              selectedIcon: Icon(Icons.calendar_today, color: AppTheme.amber),
+              label: 'Calendar',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.add_circle_outline),
+              selectedIcon: Icon(Icons.add_circle, color: AppTheme.amber),
+              label: 'Log',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.monitor_weight_outlined),
+              selectedIcon: Icon(Icons.monitor_weight, color: AppTheme.amber),
+              label: 'Weight',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.favorite_border),
+              selectedIcon: Icon(Icons.favorite, color: AppTheme.amber),
+              label: 'Health',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person_outline),
+              selectedIcon: Icon(Icons.person, color: AppTheme.amber),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
       // FAB on Calendar tab — navigates to the Log tab for quick access.
       floatingActionButton: currentTab == 0
           ? FloatingActionButton(
-              onPressed: () =>
-                  ref.read(selectedTabProvider.notifier).state = 1,
+              onPressed: () => ref.read(selectedTabProvider.notifier).state = 1,
               backgroundColor: AppTheme.amber,
               foregroundColor: const Color(0xFF1A1714),
               child: const Icon(Icons.add),
