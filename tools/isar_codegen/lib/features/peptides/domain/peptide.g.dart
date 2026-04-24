@@ -32,25 +32,40 @@ const PeptideSchema = CollectionSchema(
       name: r'isCustom',
       type: IsarType.bool,
     ),
-    r'name': PropertySchema(
+    r'isDeleted': PropertySchema(
       id: 3,
+      name: r'isDeleted',
+      type: IsarType.bool,
+    ),
+    r'isDirty': PropertySchema(
+      id: 4,
+      name: r'isDirty',
+      type: IsarType.bool,
+    ),
+    r'name': PropertySchema(
+      id: 5,
       name: r'name',
       type: IsarType.string,
     ),
     r'supabaseId': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'supabaseId',
       type: IsarType.string,
     ),
     r'unit': PropertySchema(
-      id: 5,
+      id: 7,
       name: r'unit',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 6,
+      id: 8,
       name: r'updatedAt',
       type: IsarType.dateTime,
+    ),
+    r'userId': PropertySchema(
+      id: 9,
+      name: r'userId',
+      type: IsarType.string,
     )
   },
   estimateSize: _peptideEstimateSize,
@@ -82,6 +97,12 @@ int _peptideEstimateSize(
     }
   }
   bytesCount += 3 + object.unit.length * 3;
+  {
+    final value = object.userId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -94,10 +115,13 @@ void _peptideSerialize(
   writer.writeString(offsets[0], object.color);
   writer.writeBool(offsets[1], object.isActive);
   writer.writeBool(offsets[2], object.isCustom);
-  writer.writeString(offsets[3], object.name);
-  writer.writeString(offsets[4], object.supabaseId);
-  writer.writeString(offsets[5], object.unit);
-  writer.writeDateTime(offsets[6], object.updatedAt);
+  writer.writeBool(offsets[3], object.isDeleted);
+  writer.writeBool(offsets[4], object.isDirty);
+  writer.writeString(offsets[5], object.name);
+  writer.writeString(offsets[6], object.supabaseId);
+  writer.writeString(offsets[7], object.unit);
+  writer.writeDateTime(offsets[8], object.updatedAt);
+  writer.writeString(offsets[9], object.userId);
 }
 
 Peptide _peptideDeserialize(
@@ -111,10 +135,13 @@ Peptide _peptideDeserialize(
   object.id = id;
   object.isActive = reader.readBool(offsets[1]);
   object.isCustom = reader.readBool(offsets[2]);
-  object.name = reader.readString(offsets[3]);
-  object.supabaseId = reader.readStringOrNull(offsets[4]);
-  object.unit = reader.readString(offsets[5]);
-  object.updatedAt = reader.readDateTime(offsets[6]);
+  object.isDeleted = reader.readBool(offsets[3]);
+  object.isDirty = reader.readBool(offsets[4]);
+  object.name = reader.readString(offsets[5]);
+  object.supabaseId = reader.readStringOrNull(offsets[6]);
+  object.unit = reader.readString(offsets[7]);
+  object.updatedAt = reader.readDateTime(offsets[8]);
+  object.userId = reader.readStringOrNull(offsets[9]);
   return object;
 }
 
@@ -132,13 +159,19 @@ P _peptideDeserializeProp<P>(
     case 2:
       return (reader.readBool(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 5:
       return (reader.readString(offset)) as P;
     case 6:
+      return (reader.readStringOrNull(offset)) as P;
+    case 7:
+      return (reader.readString(offset)) as P;
+    case 8:
       return (reader.readDateTime(offset)) as P;
+    case 9:
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -430,6 +463,26 @@ extension PeptideQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isCustom',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> isDeletedEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isDeleted',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> isDirtyEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isDirty',
         value: value,
       ));
     });
@@ -893,6 +946,152 @@ extension PeptideQueryFilter
       ));
     });
   }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> userIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> userIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> userIdEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> userIdGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> userIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> userIdBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'userId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> userIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> userIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> userIdContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> userIdMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'userId',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> userIdIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'userId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterFilterCondition> userIdIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'userId',
+        value: '',
+      ));
+    });
+  }
 }
 
 extension PeptideQueryObject
@@ -935,6 +1134,30 @@ extension PeptideQuerySortBy on QueryBuilder<Peptide, Peptide, QSortBy> {
   QueryBuilder<Peptide, Peptide, QAfterSortBy> sortByIsCustomDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isCustom', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterSortBy> sortByIsDeleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDeleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterSortBy> sortByIsDeletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDeleted', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterSortBy> sortByIsDirty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterSortBy> sortByIsDirtyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.desc);
     });
   }
 
@@ -983,6 +1206,18 @@ extension PeptideQuerySortBy on QueryBuilder<Peptide, Peptide, QSortBy> {
   QueryBuilder<Peptide, Peptide, QAfterSortBy> sortByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterSortBy> sortByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterSortBy> sortByUserIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.desc);
     });
   }
 }
@@ -1037,6 +1272,30 @@ extension PeptideQuerySortThenBy
     });
   }
 
+  QueryBuilder<Peptide, Peptide, QAfterSortBy> thenByIsDeleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDeleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterSortBy> thenByIsDeletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDeleted', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterSortBy> thenByIsDirty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterSortBy> thenByIsDirtyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.desc);
+    });
+  }
+
   QueryBuilder<Peptide, Peptide, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1084,6 +1343,18 @@ extension PeptideQuerySortThenBy
       return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
+
+  QueryBuilder<Peptide, Peptide, QAfterSortBy> thenByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QAfterSortBy> thenByUserIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.desc);
+    });
+  }
 }
 
 extension PeptideQueryWhereDistinct
@@ -1104,6 +1375,18 @@ extension PeptideQueryWhereDistinct
   QueryBuilder<Peptide, Peptide, QDistinct> distinctByIsCustom() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isCustom');
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QDistinct> distinctByIsDeleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isDeleted');
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QDistinct> distinctByIsDirty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isDirty');
     });
   }
 
@@ -1131,6 +1414,13 @@ extension PeptideQueryWhereDistinct
   QueryBuilder<Peptide, Peptide, QDistinct> distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updatedAt');
+    });
+  }
+
+  QueryBuilder<Peptide, Peptide, QDistinct> distinctByUserId(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'userId', caseSensitive: caseSensitive);
     });
   }
 }
@@ -1161,6 +1451,18 @@ extension PeptideQueryProperty
     });
   }
 
+  QueryBuilder<Peptide, bool, QQueryOperations> isDeletedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isDeleted');
+    });
+  }
+
+  QueryBuilder<Peptide, bool, QQueryOperations> isDirtyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isDirty');
+    });
+  }
+
   QueryBuilder<Peptide, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
@@ -1182,6 +1484,12 @@ extension PeptideQueryProperty
   QueryBuilder<Peptide, DateTime, QQueryOperations> updatedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'updatedAt');
+    });
+  }
+
+  QueryBuilder<Peptide, String?, QQueryOperations> userIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'userId');
     });
   }
 }

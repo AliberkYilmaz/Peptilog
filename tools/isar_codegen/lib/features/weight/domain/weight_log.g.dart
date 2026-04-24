@@ -32,18 +32,28 @@ const WeightLogSchema = CollectionSchema(
       name: r'isDeleted',
       type: IsarType.bool,
     ),
-    r'supabaseId': PropertySchema(
+    r'isDirty': PropertySchema(
       id: 3,
+      name: r'isDirty',
+      type: IsarType.bool,
+    ),
+    r'supabaseId': PropertySchema(
+      id: 4,
       name: r'supabaseId',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
+    r'userId': PropertySchema(
+      id: 6,
+      name: r'userId',
+      type: IsarType.string,
+    ),
     r'weightKg': PropertySchema(
-      id: 5,
+      id: 7,
       name: r'weightKg',
       type: IsarType.double,
     )
@@ -74,6 +84,12 @@ int _weightLogEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.userId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -86,9 +102,11 @@ void _weightLogSerialize(
   writer.writeDateTime(offsets[0], object.createdAt);
   writer.writeDateTime(offsets[1], object.date);
   writer.writeBool(offsets[2], object.isDeleted);
-  writer.writeString(offsets[3], object.supabaseId);
-  writer.writeDateTime(offsets[4], object.updatedAt);
-  writer.writeDouble(offsets[5], object.weightKg);
+  writer.writeBool(offsets[3], object.isDirty);
+  writer.writeString(offsets[4], object.supabaseId);
+  writer.writeDateTime(offsets[5], object.updatedAt);
+  writer.writeString(offsets[6], object.userId);
+  writer.writeDouble(offsets[7], object.weightKg);
 }
 
 WeightLog _weightLogDeserialize(
@@ -102,9 +120,11 @@ WeightLog _weightLogDeserialize(
   object.date = reader.readDateTime(offsets[1]);
   object.id = id;
   object.isDeleted = reader.readBool(offsets[2]);
-  object.supabaseId = reader.readStringOrNull(offsets[3]);
-  object.updatedAt = reader.readDateTime(offsets[4]);
-  object.weightKg = reader.readDouble(offsets[5]);
+  object.isDirty = reader.readBool(offsets[3]);
+  object.supabaseId = reader.readStringOrNull(offsets[4]);
+  object.updatedAt = reader.readDateTime(offsets[5]);
+  object.userId = reader.readStringOrNull(offsets[6]);
+  object.weightKg = reader.readDouble(offsets[7]);
   return object;
 }
 
@@ -122,10 +142,14 @@ P _weightLogDeserializeProp<P>(
     case 2:
       return (reader.readBool(offset)) as P;
     case 3:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 5:
+      return (reader.readDateTime(offset)) as P;
+    case 6:
+      return (reader.readStringOrNull(offset)) as P;
+    case 7:
       return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -393,6 +417,16 @@ extension WeightLogQueryFilter
     });
   }
 
+  QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> isDirtyEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isDirty',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> supabaseIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -598,6 +632,152 @@ extension WeightLogQueryFilter
     });
   }
 
+  QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> userIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> userIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> userIdEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> userIdGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> userIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> userIdBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'userId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> userIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> userIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> userIdContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'userId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> userIdMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'userId',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> userIdIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'userId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> userIdIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'userId',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<WeightLog, WeightLog, QAfterFilterCondition> weightKgEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -704,6 +884,18 @@ extension WeightLogQuerySortBy on QueryBuilder<WeightLog, WeightLog, QSortBy> {
     });
   }
 
+  QueryBuilder<WeightLog, WeightLog, QAfterSortBy> sortByIsDirty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.asc);
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterSortBy> sortByIsDirtyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.desc);
+    });
+  }
+
   QueryBuilder<WeightLog, WeightLog, QAfterSortBy> sortBySupabaseId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'supabaseId', Sort.asc);
@@ -725,6 +917,18 @@ extension WeightLogQuerySortBy on QueryBuilder<WeightLog, WeightLog, QSortBy> {
   QueryBuilder<WeightLog, WeightLog, QAfterSortBy> sortByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterSortBy> sortByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterSortBy> sortByUserIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.desc);
     });
   }
 
@@ -791,6 +995,18 @@ extension WeightLogQuerySortThenBy
     });
   }
 
+  QueryBuilder<WeightLog, WeightLog, QAfterSortBy> thenByIsDirty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.asc);
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterSortBy> thenByIsDirtyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDirty', Sort.desc);
+    });
+  }
+
   QueryBuilder<WeightLog, WeightLog, QAfterSortBy> thenBySupabaseId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'supabaseId', Sort.asc);
@@ -812,6 +1028,18 @@ extension WeightLogQuerySortThenBy
   QueryBuilder<WeightLog, WeightLog, QAfterSortBy> thenByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterSortBy> thenByUserId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QAfterSortBy> thenByUserIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userId', Sort.desc);
     });
   }
 
@@ -848,6 +1076,12 @@ extension WeightLogQueryWhereDistinct
     });
   }
 
+  QueryBuilder<WeightLog, WeightLog, QDistinct> distinctByIsDirty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isDirty');
+    });
+  }
+
   QueryBuilder<WeightLog, WeightLog, QDistinct> distinctBySupabaseId(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -858,6 +1092,13 @@ extension WeightLogQueryWhereDistinct
   QueryBuilder<WeightLog, WeightLog, QDistinct> distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updatedAt');
+    });
+  }
+
+  QueryBuilder<WeightLog, WeightLog, QDistinct> distinctByUserId(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'userId', caseSensitive: caseSensitive);
     });
   }
 
@@ -894,6 +1135,12 @@ extension WeightLogQueryProperty
     });
   }
 
+  QueryBuilder<WeightLog, bool, QQueryOperations> isDirtyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isDirty');
+    });
+  }
+
   QueryBuilder<WeightLog, String?, QQueryOperations> supabaseIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'supabaseId');
@@ -903,6 +1150,12 @@ extension WeightLogQueryProperty
   QueryBuilder<WeightLog, DateTime, QQueryOperations> updatedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'updatedAt');
+    });
+  }
+
+  QueryBuilder<WeightLog, String?, QQueryOperations> userIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'userId');
     });
   }
 
