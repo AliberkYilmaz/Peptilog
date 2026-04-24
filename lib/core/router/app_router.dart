@@ -11,6 +11,7 @@ import '../../features/auth/presentation/screens/pin_entry_screen.dart';
 import '../../features/auth/presentation/screens/pin_setup_screen.dart';
 import '../../features/auth/presentation/screens/sign_in_screen.dart';
 import '../../features/auth/presentation/screens/sign_up_screen.dart';
+import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 
 /// A [ChangeNotifier] that invalidates the router whenever auth state changes.
 class _RouterNotifier extends ChangeNotifier {
@@ -125,9 +126,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/dashboard',
-        builder: (context, state) => const Scaffold(
-          body: Center(child: Text('Dashboard — coming soon')),
-        ),
+        builder: (context, state) => const DashboardScreen(),
+      ),
+      GoRoute(
+        path: '/quick-log',
+        builder: (context, state) => const DashboardScreen(initialTab: 1),
       ),
     ],
   );
