@@ -1,7 +1,5 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 
-import '../../../core/database/isar_provider.dart';
 import '../domain/peptide.dart';
 import 'peptide_repository.dart';
 
@@ -32,8 +30,3 @@ class IsarPeptideRepository implements PeptideRepository {
   Stream<List<Peptide>> watchAll() =>
       _isar.peptides.where().watch(fireImmediately: true);
 }
-
-final peptideRepositoryProvider = FutureProvider<PeptideRepository>((ref) async {
-  final isar = await ref.watch(isarProvider.future);
-  return IsarPeptideRepository(isar);
-});

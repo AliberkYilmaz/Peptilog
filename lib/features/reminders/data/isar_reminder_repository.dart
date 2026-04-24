@@ -1,7 +1,5 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 
-import '../../../core/database/isar_provider.dart';
 import '../domain/reminder.dart';
 import 'reminder_repository.dart';
 
@@ -36,9 +34,3 @@ class IsarReminderRepository implements ReminderRepository {
   Stream<List<Reminder>> watchAll() =>
       _isar.reminders.where().watch(fireImmediately: true);
 }
-
-final reminderRepositoryProvider =
-    FutureProvider<ReminderRepository>((ref) async {
-  final isar = await ref.watch(isarProvider.future);
-  return IsarReminderRepository(isar);
-});

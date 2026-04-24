@@ -1,7 +1,5 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 
-import '../../../core/database/isar_provider.dart';
 import '../domain/injection_log.dart';
 import 'injection_log_repository.dart';
 
@@ -25,12 +23,12 @@ class IsarInjectionLogRepository implements InjectionLogRepository {
   }
 
   @override
-  Future<List<InjectionLog>> getByDateRange(DateTime from, DateTime to) =>
-      _isar.injectionLogs
-          .filter()
-          .isDeletedEqualTo(false)
-          .loggedAtBetween(from, to)
-          .findAll();
+  Future<List<InjectionLog>> getByDateRange(DateTime from, DateTime to) => _isar
+      .injectionLogs
+      .filter()
+      .isDeletedEqualTo(false)
+      .loggedAtBetween(from, to)
+      .findAll();
 
   @override
   Future<InjectionLog?> getById(int id) => _isar.injectionLogs.get(id);
@@ -52,8 +50,10 @@ class IsarInjectionLogRepository implements InjectionLogRepository {
   }
 
   @override
-  Stream<List<InjectionLog>> watchAll() =>
-      _isar.injectionLogs.filter().isDeletedEqualTo(false).watch(fireImmediately: true);
+  Stream<List<InjectionLog>> watchAll() => _isar.injectionLogs
+      .filter()
+      .isDeletedEqualTo(false)
+      .watch(fireImmediately: true);
 
   @override
   Stream<List<InjectionLog>> watchByDate(DateTime date) {
@@ -66,9 +66,3 @@ class IsarInjectionLogRepository implements InjectionLogRepository {
         .watch(fireImmediately: true);
   }
 }
-
-final injectionLogRepositoryProvider =
-    FutureProvider<InjectionLogRepository>((ref) async {
-  final isar = await ref.watch(isarProvider.future);
-  return IsarInjectionLogRepository(isar);
-});
