@@ -19,6 +19,7 @@ import 'core/router/app_router.dart';
 import 'core/services/notification_service.dart';
 import 'core/sync/sync_controller.dart';
 import 'core/theme/app_theme.dart';
+import 'l10n/app_localizations.dart';
 
 Future<void> main() async {
   // Stage 4 marker — sync write before anything else so we know Dart main() was entered.
@@ -243,6 +244,8 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
       theme: AppTheme.dark,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 }
