@@ -90,11 +90,19 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
 
-// AGP 7.4.2 is intentional (isar_flutter_libs 3.x is incompatible with AGP 8.x).
-// Newer AndroidX libraries (core-ktx:1.17, browser:1.9, etc.) declare minAgp=8.9.1
-// in their AAR metadata. Disable that enforcement — 7.4.2 handles these correctly.
-tasks.configureEach {
-    if (name.startsWith("check") && name.contains("AarMetadata")) {
-        enabled = false
+// Pin transitive AndroidX deps to versions that are stable on AGP 8.x and do not
+// pull in API surface missing at runtime on older devices. Without pinning, Gradle
+// resolves to bleeding-edge versions (core-ktx:1.17, browser:1.9, etc.) that can
+// crash at runtime on API < 35 devices. checkAarMetadata is re-enabled so future
+// regressions are caught at build time rather than on-device.
+configurations.all {
+    resolutionStrategy.eachDependency {
+        when (requested.group) {
+            "androidx.core" -> if (requested.name == "core-ktx") useVersion("1.12.0")
+            "androidx.browser" -> useVersion("1.7.0")
+            "androidx.activity" -> useVersion("1.8.2")
+            "androidx.fragment" -> useVersion("1.6.2")
+            "androidx.lifecycle" -> useVersion("2.7.0")
+        }
     }
 }
