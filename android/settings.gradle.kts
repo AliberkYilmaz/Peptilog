@@ -25,3 +25,16 @@ plugins {
 }
 
 include(":app")
+
+// Workaround: AGP 8.x requires namespace in all library modules.
+// isar_flutter_libs 3.1.0+1 predates this requirement and omits namespace.
+// Registering via gradle.allprojects ensures afterEvaluate fires before any
+// project is evaluated, avoiding "project already evaluated" errors.
+gradle.allprojects {
+    afterEvaluate {
+        val lib = extensions.findByType<com.android.build.gradle.LibraryExtension>()
+        if (lib != null && lib.namespace == null) {
+            lib.namespace = project.name.replace("-", "_")
+        }
+    }
+}
