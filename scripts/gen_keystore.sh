@@ -1,26 +1,21 @@
 #!/usr/bin/env bash
 # gen_keystore.sh
 #
-# Generates the Peptilog Android release keystore at ~/.android/peptilog-release.jks
+# Generates the Peptilog Android release keystore at android/app/peptilog-release.jks
 # and prints SHA-1 fingerprints for both debug and release keys.
 #
-# Usage:
-#   ./scripts/gen_keystore.sh
+# Run ONCE to create the keystore. After that, upload the credentials to GitHub via
+# setup_signing.sh.
 #
 # Requirements:
-#   - JDK 17+ (keytool). On macOS via Homebrew: brew install openjdk@17
-#   - After generation, base64-encode and store as GitHub secret:
-#       base64 -i ~/.android/peptilog-release.jks | tr -d '\n' | gh secret set KEYSTORE_FILE
-#       echo "$KEYSTORE_PASSWORD" | gh secret set KEYSTORE_PASSWORD
-#       echo "peptilog-release"    | gh secret set KEY_ALIAS
-#       echo "$KEY_PASSWORD"       | gh secret set KEY_PASSWORD
-#
-# NEVER commit the .jks file to the repository.
+#   JDK 17+ (keytool). On macOS via Homebrew: brew install openjdk@17
 
 set -euo pipefail
 
 KEYTOOL=$(command -v keytool 2>/dev/null || echo "/opt/homebrew/Cellar/openjdk@17/17.0.19/bin/keytool")
-KEYSTORE="$HOME/.android/peptilog-release.jks"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+KEYSTORE="${SCRIPT_DIR}/../android/app/peptilog-release.jks"
+KEY_PROPS="${SCRIPT_DIR}/../android/key.properties"
 KEY_ALIAS="peptilog-release"
 VALIDITY=10000
 
@@ -39,17 +34,23 @@ else
   "$KEYTOOL" -genkeypair \
     -v \
     -keystore "$KEYSTORE" \
-    -storetype JKS \
     -keyalg RSA \
-    -keysize 2048 \
+    -keysize 4096 \
     -validity "$VALIDITY" \
     -alias "$KEY_ALIAS" \
     -storepass "$STORE_PASS" \
-    -keypass "$STORE_PASS" \
     -dname "CN=Peptilog, OU=Mobile, O=Peptilog, L=Istanbul, ST=Istanbul, C=TR"
+
+  cat > "$KEY_PROPS" <<EOF
+storePassword=${STORE_PASS}
+keyPassword=${STORE_PASS}
+keyAlias=${KEY_ALIAS}
+storeFile=peptilog-release.jks
+EOF
 
   echo ""
   echo "Keystore generated at: $KEYSTORE"
+  echo "key.properties written at: $KEY_PROPS"
 fi
 
 echo ""
@@ -62,12 +63,11 @@ echo "=== DEBUG SHA-1 ==="
 
 echo ""
 echo "=== RELEASE SHA-1 ==="
+STORE_PASS="${STORE_PASS:-$(grep storePassword "$KEY_PROPS" | cut -d= -f2)}"
 "$KEYTOOL" -list -v \
   -keystore "$KEYSTORE" \
   -alias "$KEY_ALIAS" \
   -storepass "$STORE_PASS" 2>/dev/null | grep -E "SHA1|SHA256"
 
 echo ""
-echo "Add the SHA-1 values above to Firebase / Google Cloud Console for:"
-echo "  - Debug SHA-1  → Google OAuth (development)"
-echo "  - Release SHA-1 → Google OAuth (production) + Play Store"
+echo "Next step: run ./scripts/setup_signing.sh to upload credentials to GitHub Actions."
