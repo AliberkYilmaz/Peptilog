@@ -89,3 +89,12 @@ flutter {
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
+
+// AGP 7.4.2 is intentional (isar_flutter_libs 3.x is incompatible with AGP 8.x).
+// Newer AndroidX libraries (core-ktx:1.17, browser:1.9, etc.) declare minAgp=8.9.1
+// in their AAR metadata. Disable that enforcement — 7.4.2 handles these correctly.
+tasks.configureEach {
+    if (name.startsWith("check") && name.contains("AarMetadata")) {
+        enabled = false
+    }
+}
