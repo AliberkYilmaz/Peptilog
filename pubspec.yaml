@@ -2,7 +2,7 @@ name: peptilog_app
 description: "Peptilog — mobile app for tracking peptide injections, weight, and health metrics."
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.11.5

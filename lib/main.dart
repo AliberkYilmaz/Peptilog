@@ -19,42 +19,96 @@ import 'core/theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // DIAGNOSTIC BUILD — staged try/catch so boot failures show the exact failing
+  // stage + exception on-screen instead of a silent OS crash dialog. Remove
+  // once the crash root-cause is identified and fixed.
+  String stage = 'pre-init';
+  try {
+    stage = 'Firebase.initializeApp';
+    await Firebase.initializeApp();
 
-  await Supabase.initialize(
-    url: AppConstants.supabaseUrl,
-    anonKey: AppConstants.supabaseAnonKey,
-    authOptions: FlutterAuthClientOptions(
-      authFlowType: AuthFlowType.pkce,
-      autoRefreshToken: true,
-    ),
-  );
-
-  final isar = await IsarDatabase.open();
-  await SeedService(isar).seedPresetsIfNeeded();
-
-  final notificationLaunchRoute = await NotificationService.initialize();
-
-  final prefs = await SharedPreferences.getInstance();
-
-  await SentryFlutter.init(
-    (options) {
-      options.dsn = const String.fromEnvironment('SENTRY_DSN');
-      options.environment = const String.fromEnvironment(
-        'ENV',
-        defaultValue: 'development',
-      );
-    },
-    appRunner: () => runApp(
-      ProviderScope(
-        overrides: [
-          isarProvider.overrideWithValue(isar),
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
-        child: PeptilogApp(notificationLaunchRoute: notificationLaunchRoute),
+    stage = 'Supabase.initialize';
+    await Supabase.initialize(
+      url: AppConstants.supabaseUrl,
+      anonKey: AppConstants.supabaseAnonKey,
+      authOptions: FlutterAuthClientOptions(
+        authFlowType: AuthFlowType.pkce,
+        autoRefreshToken: true,
       ),
-    ),
-  );
+    );
+
+    stage = 'IsarDatabase.open';
+    final isar = await IsarDatabase.open();
+
+    stage = 'SeedService.seedPresetsIfNeeded';
+    await SeedService(isar).seedPresetsIfNeeded();
+
+    stage = 'NotificationService.initialize';
+    final notificationLaunchRoute = await NotificationService.initialize();
+
+    stage = 'SharedPreferences.getInstance';
+    final prefs = await SharedPreferences.getInstance();
+
+    stage = 'SentryFlutter.init';
+    await SentryFlutter.init(
+      (options) {
+        options.dsn = const String.fromEnvironment('SENTRY_DSN');
+        options.environment = const String.fromEnvironment(
+          'ENV',
+          defaultValue: 'development',
+        );
+      },
+      appRunner: () => runApp(
+        ProviderScope(
+          overrides: [
+            isarProvider.overrideWithValue(isar),
+            sharedPreferencesProvider.overrideWithValue(prefs),
+          ],
+          child: PeptilogApp(notificationLaunchRoute: notificationLaunchRoute),
+        ),
+      ),
+    );
+  } catch (e, st) {
+    runApp(MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.black,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'PEPTILOG BOOT FAILURE',
+                    style: TextStyle(color: Colors.red, fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'STAGE: $stage',
+                    style: const TextStyle(color: Colors.amber, fontSize: 14, fontFamily: 'monospace'),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text('ERROR:', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                  Text(
+                    '$e',
+                    style: const TextStyle(color: Colors.white, fontFamily: 'monospace', fontSize: 12),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text('STACK:', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                  Text(
+                    '$st',
+                    style: const TextStyle(color: Colors.white60, fontFamily: 'monospace', fontSize: 10),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ));
+  }
 }
 
 class PeptilogApp extends ConsumerStatefulWidget {
