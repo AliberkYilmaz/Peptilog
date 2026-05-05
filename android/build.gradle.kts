@@ -3,6 +3,11 @@ allprojects {
         google()
         mavenCentral()
     }
+    // Force androidx.browser to 1.8.0: the 1.9.0 release requires AGP >= 8.9.1
+    // but we're using AGP 7.4.2 (required for isar_flutter_libs 3.x compat).
+    configurations.all {
+        resolutionStrategy.force("androidx.browser:browser:1.8.0")
+    }
 }
 
 val newBuildDir: Directory =
