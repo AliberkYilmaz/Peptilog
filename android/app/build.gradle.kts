@@ -38,7 +38,7 @@ fun envOrProp(envKey: String, propKey: String): String? =
 
 android {
     namespace = "com.peptilog.app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
