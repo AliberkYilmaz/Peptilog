@@ -34,8 +34,8 @@ class NotificationService {
 
     // Detect the device's local timezone and configure the tz package.
     try {
-      final tzName = await FlutterTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(tzName));
+      final tzInfo = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(tzInfo.identifier));
     } catch (_) {
       // Fall back to UTC if detection fails — better than crashing.
     }
