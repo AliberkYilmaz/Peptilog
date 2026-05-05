@@ -4,7 +4,8 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
+// path_provider removed from main.dart — writeBreadcrumbs now uses direct sync writes
+// to avoid MethodChannel hang before WidgetsFlutterBinding is initialized.
 // sentry_flutter temporarily removed for crash diagnosis (PEP-78)
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -27,26 +28,26 @@ Future<void> main() async {
   } catch (_) {}
 
   WidgetsFlutterBinding.ensureInitialized();
-  // DIAGNOSTIC: per-stage breadcrumb log + 15s timeouts. Each step writes a
-  // "STARTED" line before awaiting and "OK" after. On a hang, the last
-  // "STARTED" line in peptilog-boot.txt identifies the culprit. A timeout
-  // converts an infinite hang into a TimeoutException caught below.
-  // Remove after root cause is fixed.
+
+  // Stage 5: proves WidgetsFlutterBinding completed (sync path, no plugin needed)
+  try {
+    File('/storage/emulated/0/Download/app-stage-5-bindingReady.txt')
+        .writeAsStringSync('binding ready at ${DateTime.now().toIso8601String()}\n');
+  } catch (_) {}
+
+  // DIAGNOSTIC: per-stage breadcrumb log + 15s timeouts.
+  // writeBreadcrumbs is synchronous and uses a direct path write to avoid
+  // MethodChannel hang — getApplicationDocumentsDirectory() blocks forever when
+  // the platform channel handler isn't bound yet (found in versionCode 8).
   String stage = 'pre-init';
   final breadcrumbs = StringBuffer(
     '=== Peptilog boot ${DateTime.now().toIso8601String()} ===\n',
   );
 
-  Future<void> writeBreadcrumbs([String suffix = '']) async {
+  void writeBreadcrumbs([String suffix = '']) {
     try {
-      final dir = await getApplicationDocumentsDirectory();
-      final content = '${breadcrumbs.toString()}$suffix';
-      await File('${dir.path}/peptilog-boot.txt').writeAsString(content);
-      // Also try public Downloads (may fail on API 29+ without MANAGE_EXTERNAL_STORAGE)
-      final downloads = Directory('/storage/emulated/0/Download');
-      if (await downloads.exists()) {
-        await File('${downloads.path}/peptilog-boot.txt').writeAsString(content);
-      }
+      File('/storage/emulated/0/Download/peptilog-boot.txt')
+          .writeAsStringSync('${breadcrumbs.toString()}$suffix');
     } catch (_) {}
   }
 
@@ -58,7 +59,7 @@ Future<void> main() async {
     stage = name;
     final t0 = DateTime.now();
     breadcrumbs.writeln('[${t0.toIso8601String().substring(11, 19)}] STARTED $name');
-    await writeBreadcrumbs();
+    writeBreadcrumbs();
     try {
       final result = await body().timeout(
         timeout,
@@ -66,11 +67,11 @@ Future<void> main() async {
       );
       final ms = DateTime.now().difference(t0).inMilliseconds;
       breadcrumbs.writeln('[${DateTime.now().toIso8601String().substring(11, 19)}] OK $name (${ms}ms)');
-      await writeBreadcrumbs();
+      writeBreadcrumbs();
       return result;
     } catch (e) {
       breadcrumbs.writeln('[${DateTime.now().toIso8601String().substring(11, 19)}] FAILED $name: $e');
-      await writeBreadcrumbs();
+      writeBreadcrumbs();
       rethrow;
     }
   }
@@ -99,7 +100,7 @@ Future<void> main() async {
         'SharedPreferences.getInstance', () => SharedPreferences.getInstance());
 
     breadcrumbs.writeln('[${DateTime.now().toIso8601String().substring(11, 19)}] runApp');
-    await writeBreadcrumbs();
+    writeBreadcrumbs();
 
     // sentry_flutter temporarily removed for crash diagnosis (PEP-78)
     runApp(
@@ -113,7 +114,7 @@ Future<void> main() async {
     );
   } catch (e, st) {
     breadcrumbs.writeln('FATAL $stage: $e\n$st');
-    await writeBreadcrumbs();
+    writeBreadcrumbs();
     runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
