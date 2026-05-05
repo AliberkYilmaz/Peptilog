@@ -1,3 +1,7 @@
+import java.util.Base64
+import java.util.Properties
+import java.io.File
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -5,6 +9,32 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
     id("com.google.gms.google-services")
 }
+
+// key.properties fallback for local development
+val keyPropertiesFile = rootProject.file("key.properties")
+val keyProperties = Properties()
+if (keyPropertiesFile.exists()) {
+    keyPropertiesFile.inputStream().use { keyProperties.load(it) }
+}
+
+// In CI, KEYSTORE_FILE is a base64-encoded .jks written to a temp file.
+// Locally, key.properties points to the file on disk.
+fun resolveKeystore(): File? {
+    val b64 = System.getenv("KEYSTORE_FILE")
+    return if (!b64.isNullOrBlank()) {
+        val tmp = File(layout.buildDirectory.asFile.get(), "signing/peptilog-release.jks")
+        tmp.parentFile.mkdirs()
+        tmp.writeBytes(Base64.getDecoder().decode(b64))
+        tmp
+    } else {
+        // key.properties storeFile is relative to android/app/ (the module dir)
+        keyProperties["storeFile"]?.let { file(it as String) }
+    }
+}
+
+fun envOrProp(envKey: String, propKey: String): String? =
+    System.getenv(envKey)?.takeIf { it.isNotBlank() }
+        ?: keyProperties[propKey] as String?
 
 android {
     namespace = "com.peptilog.app"
@@ -21,21 +51,32 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.peptilog.app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            val ksFile = resolveKeystore()
+            val storePass = envOrProp("KEYSTORE_PASSWORD", "storePassword")
+            val alias = envOrProp("KEY_ALIAS", "keyAlias") ?: "peptilog-release"
+            val keyPass = envOrProp("KEY_PASSWORD", "keyPassword") ?: storePass
+
+            if (ksFile != null && ksFile.exists() && storePass != null) {
+                storeFile = ksFile
+                storePassword = storePass
+                keyAlias = alias
+                keyPassword = keyPass
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
