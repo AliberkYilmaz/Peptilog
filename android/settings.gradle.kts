@@ -28,13 +28,21 @@ include(":app")
 
 // Workaround: AGP 8.x requires namespace in all library modules.
 // isar_flutter_libs 3.1.0+1 predates this requirement and omits namespace.
-// Registering via gradle.allprojects ensures afterEvaluate fires before any
-// project is evaluated, avoiding "project already evaluated" errors.
+// Workaround: Kotlin 2.1+ removed language version 1.6; sentry_flutter 8.x
+// still declares it. Bump any sub-1.8 language/api version to 1.8.
 gradle.allprojects {
     afterEvaluate {
         val lib = extensions.findByType<com.android.build.gradle.LibraryExtension>()
         if (lib != null && lib.namespace == null) {
             lib.namespace = project.name.replace("-", "_")
+        }
+
+        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
+            val lv = kotlinOptions.languageVersion
+            if (lv != null && lv < "1.8") {
+                kotlinOptions.languageVersion = "1.8"
+                kotlinOptions.apiVersion = "1.8"
+            }
         }
     }
 }
