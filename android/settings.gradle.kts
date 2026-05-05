@@ -26,9 +26,8 @@ plugins {
 
 include(":app")
 
-// Workaround A — AGP 8.x requires namespace in all library modules.
-// isar_flutter_libs 3.1.0+1 omits it; the CI also patches it directly.
-// This afterEvaluate is a safety net for any other libraries missing namespace.
+// AGP 8.x requires namespace in all library modules.
+// This afterEvaluate is a safety net for any library that omits it.
 //
 // Workaround B — Kotlin 2.1+ removed languageVersion 1.6 support.
 // sentry_flutter 8.x declares it — bump any sub-1.8 version floor to 1.8.

@@ -19,7 +19,7 @@ dependencies:
 
   # Local database
   isar: ^3.1.0
-  isar_flutter_libs: ^3.1.0
+  isar_community_flutter_libs: ^3.1.8
   path_provider: ^2.1.5
 
   # Cloud backend
