@@ -2,7 +2,7 @@ name: peptilog_app
 description: "Peptilog — mobile app for tracking peptide injections, weight, and health metrics."
 publish_to: 'none'
 
-version: 1.0.0+2
+version: 1.0.0+3
 
 environment:
   sdk: ^3.11.5
@@ -19,7 +19,7 @@ dependencies:
 
   # Local database
   isar: ^3.1.0
-  isar_community_flutter_libs: ^3.1.8
+  isar_flutter_libs: ^3.1.0
   path_provider: ^2.1.5
 
   # Cloud backend

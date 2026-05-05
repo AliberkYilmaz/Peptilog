@@ -30,6 +30,18 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
+      - name: Patch isar_flutter_libs for AGP 8.x
+        run: |
+          ISAR_DIR="$HOME/.pub-cache/hosted/pub.dev/isar_flutter_libs-3.1.0+1/android"
+          BUILD_GRADLE="$ISAR_DIR/build.gradle"
+          MANIFEST="$ISAR_DIR/src/main/AndroidManifest.xml"
+          if [ -f "$BUILD_GRADLE" ]; then
+            grep -q "namespace" "$BUILD_GRADLE" || \
+              sed -i "s/android {/android {\n    namespace 'dev.isar.isar_flutter_libs'/" "$BUILD_GRADLE"
+            sed -i "s/compileSdkVersion [0-9]*/compileSdkVersion 36/" "$BUILD_GRADLE"
+          fi
+          [ -f "$MANIFEST" ] && sed -i 's/ package="[^"]*"//g' "$MANIFEST"
+
       - name: Generate l10n
         run: flutter gen-l10n
 
