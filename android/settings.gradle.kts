@@ -38,10 +38,13 @@ gradle.allprojects {
         }
 
         tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
-            val lv = kotlinOptions.languageVersion
-            if (lv != null && lv < "1.8") {
-                kotlinOptions.languageVersion = "1.8"
-                kotlinOptions.apiVersion = "1.8"
+            compilerOptions {
+                val minVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8
+                val lv = languageVersion.orNull
+                if (lv == null || lv < minVersion) {
+                    languageVersion.set(minVersion)
+                    apiVersion.set(minVersion)
+                }
             }
         }
     }
