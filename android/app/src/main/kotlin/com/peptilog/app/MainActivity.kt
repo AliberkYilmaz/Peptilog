@@ -1,4 +1,4 @@
-package com.peptilog.peptilog_app
+package com.peptilog.app
 
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity

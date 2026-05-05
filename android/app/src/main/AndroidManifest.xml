@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <application
         android:label="peptilog_app"
-        android:name="com.peptilog.peptilog_app.PeptilogApplication"
+        android:name=".PeptilogApplication"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
