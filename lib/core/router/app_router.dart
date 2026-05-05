@@ -54,11 +54,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) async {
       final loc = state.matchedLocation;
 
-      // Let the splash through — it triggers the first redirect cycle.
-      if (loc == '/splash') return null;
-
       final pinRepo = ref.read(pinRepositoryProvider);
       final authAsync = ref.read(authStateChangesProvider);
+
+      // Wait for the auth stream's first emission. Until then, stay on /splash.
+      // After this point, the gates below will redirect away from /splash.
+      if (authAsync.isLoading && loc == '/splash') return null;
 
       // --- GDPR ---
       final hasConsent = await pinRepo.hasGdprConsent();
