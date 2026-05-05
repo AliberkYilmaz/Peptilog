@@ -102,6 +102,27 @@ Future<void> main() async {
     breadcrumbs.writeln('[${DateTime.now().toIso8601String().substring(11, 19)}] runApp');
     writeBreadcrumbs();
 
+    // DIAG_HELLO=true bypasses the full widget tree to confirm Flutter rendering works.
+    // If "HELLO" renders → Flutter is fine, bug is in PeptilogApp/router.
+    // If C-splash persists → Flutter rendering pipeline itself is stuck.
+    const bool diagHello = bool.fromEnvironment('DIAG_HELLO');
+    if (diagHello) {
+      runApp(const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          backgroundColor: Colors.black,
+          body: Center(
+            child: Text(
+              'HELLO from Peptilog versionCode 10 diag\nFlutter rendering OK',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.green, fontSize: 20, fontFamily: 'monospace'),
+            ),
+          ),
+        ),
+      ));
+      return;
+    }
+
     // sentry_flutter temporarily removed for crash diagnosis (PEP-78)
     runApp(
       ProviderScope(
@@ -176,8 +197,16 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
   @override
   void initState() {
     super.initState();
+    try {
+      File('/storage/emulated/0/Download/widget-stage-2-initState.txt')
+          .writeAsStringSync('initState entered at ${DateTime.now().toIso8601String()}\n');
+    } catch (_) {}
     _syncController = ref.read(syncControllerProvider);
     _syncController.init();
+    try {
+      File('/storage/emulated/0/Download/widget-stage-3-syncInit.txt')
+          .writeAsStringSync('SyncController.init done at ${DateTime.now().toIso8601String()}\n');
+    } catch (_) {}
 
     // Navigate to the payload route when a notification is tapped.
     _notifTapSub = NotificationService.tapRoute.listen((route) {
@@ -204,6 +233,10 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
 
   @override
   Widget build(BuildContext context) {
+    try {
+      File('/storage/emulated/0/Download/widget-stage-1-appBuild.txt')
+          .writeAsStringSync('PeptilogApp.build at ${DateTime.now().toIso8601String()}\n');
+    } catch (_) {}
     final router = ref.watch(appRouterProvider);
     return MaterialApp.router(
       title: AppConstants.appName,
