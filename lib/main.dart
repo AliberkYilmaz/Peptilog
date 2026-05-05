@@ -20,6 +20,12 @@ import 'core/sync/sync_controller.dart';
 import 'core/theme/app_theme.dart';
 
 Future<void> main() async {
+  // Stage 4 marker — sync write before anything else so we know Dart main() was entered.
+  try {
+    File('/storage/emulated/0/Download/app-stage-4-dartMain.txt')
+        .writeAsStringSync('dart main entered at ${DateTime.now().toIso8601String()}\n');
+  } catch (_) {}
+
   WidgetsFlutterBinding.ensureInitialized();
   // DIAGNOSTIC: per-stage breadcrumb log + 15s timeouts. Each step writes a
   // "STARTED" line before awaiting and "OK" after. On a hang, the last

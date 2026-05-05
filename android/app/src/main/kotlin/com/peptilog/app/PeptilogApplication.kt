@@ -7,14 +7,12 @@ import android.provider.MediaStore
 import java.io.PrintWriter
 import java.io.StringWriter
 
-// DIAGNOSTIC: catches crashes that happen before MainActivity.onCreate —
-// ContentProvider auto-init failures, static initializers, etc.
-// The UncaughtExceptionHandler is installed in attachBaseContext so it is
-// active during ContentProvider.onCreate() calls (which run between
-// attachBaseContext and Application.onCreate). Remove once root cause is fixed.
 class PeptilogApplication : android.app.Application() {
 
     override fun attachBaseContext(base: Context?) {
+        // Stage 1 — must use base directly: super hasn't been called yet so
+        // this.contentResolver is null at this point.
+        writeStageMarker("app-stage-1-attachBase.txt", base)
         super.attachBaseContext(base)
         Thread.setDefaultUncaughtExceptionHandler { _, t ->
             writeCrashFile("UncaughtException (pre-Application.onCreate or ContentProvider)", t)
@@ -22,12 +20,27 @@ class PeptilogApplication : android.app.Application() {
     }
 
     override fun onCreate() {
+        writeStageMarker("app-stage-2-appOnCreate.txt")
         try {
             super.onCreate()
         } catch (t: Throwable) {
             writeCrashFile("Application.onCreate", t)
             throw t
         }
+    }
+
+    private fun writeStageMarker(name: String, ctx: Context? = this) {
+        val ts = "stage marker @ ${java.text.SimpleDateFormat("HH:mm:ss.SSS").format(java.util.Date())}\n"
+        try {
+            val resolver = ctx?.contentResolver ?: return
+            val cv = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+                put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+            }
+            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, cv)
+            uri?.let { resolver.openOutputStream(it)?.use { os -> os.write(ts.toByteArray()) } }
+        } catch (_: Throwable) {}
     }
 
     private fun writeCrashFile(stage: String, t: Throwable) {
@@ -41,11 +54,9 @@ class PeptilogApplication : android.app.Application() {
             appendLine("STACK:")
             append(sw)
         }
-        // App-private external storage (Android/data/com.peptilog.app/files/)
         try {
             java.io.File(getExternalFilesDir(null), "peptilog-app-crash.txt").writeText(report)
         } catch (_: Throwable) {}
-        // MediaStore Downloads — visible in Samsung My Files / Files app on all OEMs (API 29+)
         try {
             val cv = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, "peptilog-app-crash.txt")

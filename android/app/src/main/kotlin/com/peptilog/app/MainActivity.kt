@@ -1,17 +1,17 @@
 package com.peptilog.app
 
+import android.content.ContentValues
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import io.flutter.embedding.android.FlutterActivity
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 
 class MainActivity : FlutterActivity() {
-    // DIAGNOSTIC: JVM-side catch around Flutter engine bootstrap. Catches
-    // UnsatisfiedLinkError and other Errors/Exceptions thrown during native
-    // library loading — these bypass the Dart try/catch entirely. Remove once
-    // the root cause is identified and fixed.
     override fun onCreate(savedInstanceState: Bundle?) {
+        writeStageMarker("app-stage-3-mainOnCreate.txt")
         try {
             super.onCreate(savedInstanceState)
         } catch (t: Throwable) {
@@ -37,5 +37,18 @@ class MainActivity : FlutterActivity() {
             ).show()
             finish()
         }
+    }
+
+    private fun writeStageMarker(name: String) {
+        val ts = "stage marker @ ${java.text.SimpleDateFormat("HH:mm:ss.SSS").format(java.util.Date())}\n"
+        try {
+            val cv = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+                put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+            }
+            val uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, cv)
+            uri?.let { contentResolver.openOutputStream(it)?.use { os -> os.write(ts.toByteArray()) } }
+        } catch (_: Throwable) {}
     }
 }
