@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+// sentry_flutter temporarily removed for crash diagnosis (PEP-78)
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -49,23 +49,15 @@ Future<void> main() async {
     stage = 'SharedPreferences.getInstance';
     final prefs = await SharedPreferences.getInstance();
 
-    stage = 'SentryFlutter.init';
-    await SentryFlutter.init(
-      (options) {
-        options.dsn = const String.fromEnvironment('SENTRY_DSN');
-        options.environment = const String.fromEnvironment(
-          'ENV',
-          defaultValue: 'development',
-        );
-      },
-      appRunner: () => runApp(
-        ProviderScope(
-          overrides: [
-            isarProvider.overrideWithValue(isar),
-            sharedPreferencesProvider.overrideWithValue(prefs),
-          ],
-          child: PeptilogApp(notificationLaunchRoute: notificationLaunchRoute),
-        ),
+    // SentryFlutter.init temporarily removed for crash diagnosis (PEP-78)
+    stage = 'runApp';
+    runApp(
+      ProviderScope(
+        overrides: [
+          isarProvider.overrideWithValue(isar),
+          sharedPreferencesProvider.overrideWithValue(prefs),
+        ],
+        child: PeptilogApp(notificationLaunchRoute: notificationLaunchRoute),
       ),
     );
   } catch (e, st) {
