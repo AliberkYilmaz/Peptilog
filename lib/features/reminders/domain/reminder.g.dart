@@ -15,7 +15,7 @@ extension GetReminderCollection on Isar {
 
 const ReminderSchema = CollectionSchema(
   name: r'Reminder',
-  id: -8566764253612256256,
+  id: -8566764253612256045,
   properties: {
     r'daysOfWeek': PropertySchema(
       id: 0,

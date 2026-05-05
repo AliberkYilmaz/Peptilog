@@ -15,7 +15,7 @@ extension GetSleepLogCollection on Isar {
 
 const SleepLogSchema = CollectionSchema(
   name: r'SleepLog',
-  id: 7895731279694127104,
+  id: 7895731279694127521,
   properties: {
     r'createdAt': PropertySchema(
       id: 0,

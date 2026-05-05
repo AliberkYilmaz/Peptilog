@@ -15,7 +15,7 @@ extension GetBloodPressureLogCollection on Isar {
 
 const BloodPressureLogSchema = CollectionSchema(
   name: r'BloodPressureLog',
-  id: -1229315135411683840,
+  id: -1229315135411683934,
   properties: {
     r'createdAt': PropertySchema(
       id: 0,

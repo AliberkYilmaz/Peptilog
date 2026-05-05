@@ -15,7 +15,7 @@ extension GetInjectionLogCollection on Isar {
 
 const InjectionLogSchema = CollectionSchema(
   name: r'InjectionLog',
-  id: -9047293363754949632,
+  id: -9047293363754949726,
   properties: {
     r'createdAt': PropertySchema(
       id: 0,

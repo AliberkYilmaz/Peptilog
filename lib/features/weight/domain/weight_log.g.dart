@@ -15,7 +15,7 @@ extension GetWeightLogCollection on Isar {
 
 const WeightLogSchema = CollectionSchema(
   name: r'WeightLog',
-  id: -2488433156054674432,
+  id: -2488433156054674354,
   properties: {
     r'createdAt': PropertySchema(
       id: 0,

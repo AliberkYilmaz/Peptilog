@@ -15,7 +15,7 @@ extension GetPeptideCollection on Isar {
 
 const PeptideSchema = CollectionSchema(
   name: r'Peptide',
-  id: 584567578684853376,
+  id: 584567578684853383,
   properties: {
     r'color': PropertySchema(
       id: 0,
