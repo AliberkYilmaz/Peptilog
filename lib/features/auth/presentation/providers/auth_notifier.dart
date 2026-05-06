@@ -36,20 +36,36 @@ class AuthNotifier extends Notifier<AsyncValue<void>> {
     });
   }
 
-  Future<void> signInWithApple() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final user = await ref.read(authRepositoryProvider).signInWithApple();
-      await _runFirstSyncIfNeeded(user.id);
-    });
-  }
+  Future<void> signInWithApple() => _signInWithOAuth(
+    () => ref.read(authRepositoryProvider).signInWithApple(),
+  );
 
-  Future<void> signInWithGoogle() async {
+  Future<void> signInWithGoogle() => _signInWithOAuth(
+    () => ref.read(authRepositoryProvider).signInWithGoogle(),
+  );
+
+  /// OAuth flows open an external browser; the actual sign-in completes via
+  /// deep-link callback handled by supabase_flutter, which fires the auth
+  /// state stream listened to by the router. The "Auth returned no user"
+  /// exception thrown immediately after `signInWithOAuth` is expected and
+  /// must be suppressed — otherwise the UI shows it as a real error before
+  /// the user has even finished the consent flow in the browser.
+  Future<void> _signInWithOAuth(Future<dynamic> Function() openOAuth) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final user = await ref.read(authRepositoryProvider).signInWithGoogle();
-      await _runFirstSyncIfNeeded(user.id);
-    });
+    try {
+      final user = await openOAuth();
+      if (user != null) {
+        await _runFirstSyncIfNeeded(user.id);
+      }
+      state = const AsyncData(null);
+    } catch (e, st) {
+      if (e.toString().contains('Auth returned no user')) {
+        // OAuth in progress in the browser — wait for the auth state stream.
+        state = const AsyncData(null);
+      } else {
+        state = AsyncError(e, st);
+      }
+    }
   }
 
   Future<void> signOut() async {
