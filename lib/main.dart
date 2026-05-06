@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -194,6 +195,8 @@ class PeptilogApp extends ConsumerStatefulWidget {
 class _PeptilogAppState extends ConsumerState<PeptilogApp> {
   late SyncController _syncController;
   StreamSubscription<String>? _notifTapSub;
+  StreamSubscription<Uri>? _deepLinkSub;
+  AppLinks? _appLinks;
 
   @override
   void initState() {
@@ -208,6 +211,28 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
       File('/storage/emulated/0/Download/widget-stage-3-syncInit.txt')
           .writeAsStringSync('SyncController.init done at ${DateTime.now().toIso8601String()}\n');
     } catch (_) {}
+
+    // Listen for OAuth deep-link callbacks (com.peptilog.app://auth/callback).
+    // supabase_flutter does not auto-process incoming app links on Android,
+    // so we forward them to the auth client which exchanges the PKCE code
+    // for a session and then emits via onAuthStateChange.
+    _appLinks = AppLinks();
+    _deepLinkSub = _appLinks!.uriLinkStream.listen((uri) async {
+      try {
+        await Supabase.instance.client.auth.getSessionFromUrl(uri);
+      } catch (e) {
+        // Ignore non-auth deep links; auth state stream will not change for these.
+      }
+    });
+    // Cold-launch: if the app was opened via a deep link, the stream above may
+    // not fire. Pull the initial link explicitly.
+    _appLinks!.getInitialLink().then((uri) async {
+      if (uri != null) {
+        try {
+          await Supabase.instance.client.auth.getSessionFromUrl(uri);
+        } catch (_) {}
+      }
+    });
 
     // Navigate to the payload route when a notification is tapped.
     _notifTapSub = NotificationService.tapRoute.listen((route) {
@@ -229,6 +254,7 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
   void dispose() {
     _syncController.dispose();
     _notifTapSub?.cancel();
+    _deepLinkSub?.cancel();
     super.dispose();
   }
 
