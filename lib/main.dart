@@ -312,16 +312,23 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
                   right: 8,
                   bottom: 80,
                   child: SafeArea(
-                    child: FloatingActionButton.small(
-                      heroTag: 'talker-debug-fab',
-                      backgroundColor: AppTheme.amber,
-                      foregroundColor: Colors.black,
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => TalkerScreen(talker: talker),
-                        ),
+                    child: Builder(
+                      builder: (innerContext) => FloatingActionButton.small(
+                        heroTag: 'talker-debug-fab',
+                        backgroundColor: AppTheme.amber,
+                        foregroundColor: Colors.black,
+                        onPressed: () {
+                          // Use the router's navigator (the builder's context is
+                          // above the Navigator and has none of its own).
+                          final r = ref.read(appRouterProvider);
+                          r.routerDelegate.navigatorKey.currentState?.push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => TalkerScreen(talker: talker),
+                            ),
+                          );
+                        },
+                        child: const Icon(Icons.bug_report_outlined, size: 18),
                       ),
-                      child: const Icon(Icons.bug_report_outlined, size: 18),
                     ),
                   ),
                 ),
