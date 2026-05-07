@@ -55,6 +55,7 @@ class IsarInjectionLogRepository implements InjectionLogRepository {
       final log = await _isar.injectionLogs.get(id);
       if (log != null) {
         log.isDeleted = true;
+        log.isDirty = true;
         log.updatedAt = DateTime.now();
         await _isar.injectionLogs.put(log);
       }

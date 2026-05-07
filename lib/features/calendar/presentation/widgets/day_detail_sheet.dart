@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/providers/database_providers.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../dashboard/presentation/providers/dashboard_providers.dart';
+import '../../../injection_log/domain/injection_log.dart';
 import '../../../injection_log/presentation/providers/quick_log_notifier.dart';
 import '../providers/calendar_provider.dart';
+import 'edit_injection_sheet.dart';
 import 'injection_log_tile.dart';
 
 /// Bottom sheet showing all injection logs for [day], newest-first.
@@ -136,6 +140,13 @@ class DayDetailSheet extends ConsumerWidget {
                         return InjectionLogTile(
                           log: log,
                           peptide: peptideMap[log.peptideId],
+                          onTap: () => _openEditSheet(
+                            context,
+                            log,
+                            peptideMap[log.peptideId],
+                          ),
+                          onLongPress: () =>
+                              _confirmQuickDelete(context, ref, log),
                         );
                       },
                     ),
@@ -143,6 +154,74 @@ class DayDetailSheet extends ConsumerWidget {
           ],
         );
       },
+    );
+  }
+
+  Future<void> _openEditSheet(
+    BuildContext context,
+    InjectionLog log,
+    dynamic peptide,
+  ) {
+    return showModalBottomSheet<Object?>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppTheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => EditInjectionSheet(log: log, peptide: peptide),
+    );
+  }
+
+  Future<void> _confirmQuickDelete(
+    BuildContext context,
+    WidgetRef ref,
+    InjectionLog log,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppTheme.surface,
+        title: Text(
+          l10n.editInjectionDeleteConfirmTitle,
+          style: const TextStyle(color: AppTheme.onBackground),
+        ),
+        content: Text(
+          l10n.editInjectionDeleteConfirmBody,
+          style: TextStyle(color: AppTheme.onSurface.withAlpha(179)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(
+              l10n.editInjectionCancel,
+              style: const TextStyle(color: AppTheme.onSurface),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(
+              l10n.editInjectionDelete,
+              style: const TextStyle(color: AppTheme.error),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    await ref.read(injectionLogRepositoryProvider).softDelete(log.id);
+
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(l10n.editInjectionDeleted),
+        backgroundColor: AppTheme.surface,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
     );
   }
 }

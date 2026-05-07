@@ -251,4 +251,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get medicalDisclaimerAcceptButton => 'I understand — continue';
+
+  @override
+  String get editInjectionTitle => 'Edit Injection';
+
+  @override
+  String get editInjectionSave => 'Save injection';
+
+  @override
+  String get editInjectionDelete => 'Delete';
+
+  @override
+  String get editInjectionCancel => 'Cancel';
+
+  @override
+  String get editInjectionUpdated => 'Injection updated';
+
+  @override
+  String get editInjectionDeleted => 'Injection deleted';
+
+  @override
+  String get editInjectionDeleteConfirmTitle => 'Delete injection?';
+
+  @override
+  String get editInjectionDeleteConfirmBody =>
+      'This will permanently remove this log entry.';
 }

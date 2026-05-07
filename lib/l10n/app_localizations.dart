@@ -549,6 +549,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'I understand — continue'**
   String get medicalDisclaimerAcceptButton;
+
+  /// No description provided for @editInjectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Injection'**
+  String get editInjectionTitle;
+
+  /// No description provided for @editInjectionSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save injection'**
+  String get editInjectionSave;
+
+  /// No description provided for @editInjectionDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get editInjectionDelete;
+
+  /// No description provided for @editInjectionCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get editInjectionCancel;
+
+  /// No description provided for @editInjectionUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Injection updated'**
+  String get editInjectionUpdated;
+
+  /// No description provided for @editInjectionDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Injection deleted'**
+  String get editInjectionDeleted;
+
+  /// No description provided for @editInjectionDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete injection?'**
+  String get editInjectionDeleteConfirmTitle;
+
+  /// No description provided for @editInjectionDeleteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently remove this log entry.'**
+  String get editInjectionDeleteConfirmBody;
 }
 
 class _AppLocalizationsDelegate
