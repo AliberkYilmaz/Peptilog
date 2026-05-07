@@ -86,6 +86,6 @@ jobs:
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          testers: aliberkyilmaz@gmail.com
+          testers: aliberkyilmaz@gmail.com,arabelafarinas@gmail.com
           file: build/app/outputs/flutter-apk/app-release.apk
           releaseNotes: ${{ steps.release_notes.outputs.notes }}
