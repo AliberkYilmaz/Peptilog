@@ -314,7 +314,6 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
                   child: SafeArea(
                     child: FloatingActionButton.small(
                       heroTag: 'talker-debug-fab',
-                      tooltip: 'Open Peptilog debug panel',
                       backgroundColor: AppTheme.amber,
                       foregroundColor: Colors.black,
                       onPressed: () => Navigator.of(context).push(
