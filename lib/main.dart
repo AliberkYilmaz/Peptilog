@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 // path_provider removed from main.dart — writeBreadcrumbs now uses direct sync writes
 // to avoid MethodChannel hang before WidgetsFlutterBinding is initialized.
-// sentry_flutter temporarily removed for crash diagnosis (PEP-78)
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -34,30 +34,41 @@ final Talker talker = TalkerFlutter.init(
 
 Future<void> main() async {
   // Stage 4 marker — sync write before anything else so we know Dart main() was entered.
-  try {
-    File('/storage/emulated/0/Download/app-stage-4-dartMain.txt')
-        .writeAsStringSync('dart main entered at ${DateTime.now().toIso8601String()}\n');
-  } catch (_) {}
+  if (kDebugMode) {
+    try {
+      File('/storage/emulated/0/Download/app-stage-4-dartMain.txt')
+          .writeAsStringSync('dart main entered at ${DateTime.now().toIso8601String()}\n');
+    } catch (_) {}
+  }
 
   WidgetsFlutterBinding.ensureInitialized();
 
   // Stage 5: proves WidgetsFlutterBinding completed (sync path, no plugin needed)
-  try {
-    File('/storage/emulated/0/Download/app-stage-5-bindingReady.txt')
-        .writeAsStringSync('binding ready at ${DateTime.now().toIso8601String()}\n');
-  } catch (_) {}
+  if (kDebugMode) {
+    try {
+      File('/storage/emulated/0/Download/app-stage-5-bindingReady.txt')
+          .writeAsStringSync('binding ready at ${DateTime.now().toIso8601String()}\n');
+    } catch (_) {}
+  }
 
-  // Pipe FlutterError + PlatformDispatcher errors into Talker so they show in
-  // the in-app debug panel and can be exported via the share button.
+  // Initialize Sentry — DSN injected via --dart-define=SENTRY_DSN=...; empty → silent no-op.
+  await SentryFlutter.init((options) {
+    options.dsn = const String.fromEnvironment('SENTRY_DSN');
+    options.tracesSampleRate = 1.0;
+  });
+
+  // Pipe FlutterError + PlatformDispatcher errors into Talker and Sentry.
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
     talker.handle(details.exception, details.stack, 'FlutterError caught');
+    Sentry.captureException(details.exception, stackTrace: details.stack);
   };
   PlatformDispatcher.instance.onError = (error, stack) {
     talker.handle(error, stack, 'PlatformDispatcher.onError');
+    Sentry.captureException(error, stackTrace: stack);
     return true;
   };
-  talker.info('Peptilog boot — version 1.0.16+16');
+  talker.info('Peptilog boot — version 1.0.19+19');
 
   // DIAGNOSTIC: per-stage breadcrumb log + 15s timeouts.
   // writeBreadcrumbs is synchronous and uses a direct path write to avoid
@@ -69,6 +80,7 @@ Future<void> main() async {
   );
 
   void writeBreadcrumbs([String suffix = '']) {
+    if (!kDebugMode) return;
     try {
       File('/storage/emulated/0/Download/peptilog-boot.txt')
           .writeAsStringSync('${breadcrumbs.toString()}$suffix');
@@ -126,28 +138,6 @@ Future<void> main() async {
     breadcrumbs.writeln('[${DateTime.now().toIso8601String().substring(11, 19)}] runApp');
     writeBreadcrumbs();
 
-    // DIAG_HELLO=true bypasses the full widget tree to confirm Flutter rendering works.
-    // If "HELLO" renders → Flutter is fine, bug is in PeptilogApp/router.
-    // If C-splash persists → Flutter rendering pipeline itself is stuck.
-    const bool diagHello = bool.fromEnvironment('DIAG_HELLO');
-    if (diagHello) {
-      runApp(const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          backgroundColor: Colors.black,
-          body: Center(
-            child: Text(
-              'HELLO from Peptilog versionCode 10 diag\nFlutter rendering OK',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.green, fontSize: 20, fontFamily: 'monospace'),
-            ),
-          ),
-        ),
-      ));
-      return;
-    }
-
-    // sentry_flutter temporarily removed for crash diagnosis (PEP-78)
     runApp(
       ProviderScope(
         overrides: [
@@ -223,16 +213,20 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
   @override
   void initState() {
     super.initState();
-    try {
-      File('/storage/emulated/0/Download/widget-stage-2-initState.txt')
-          .writeAsStringSync('initState entered at ${DateTime.now().toIso8601String()}\n');
-    } catch (_) {}
+    if (kDebugMode) {
+      try {
+        File('/storage/emulated/0/Download/widget-stage-2-initState.txt')
+            .writeAsStringSync('initState entered at ${DateTime.now().toIso8601String()}\n');
+      } catch (_) {}
+    }
     _syncController = ref.read(syncControllerProvider);
     _syncController.init();
-    try {
-      File('/storage/emulated/0/Download/widget-stage-3-syncInit.txt')
-          .writeAsStringSync('SyncController.init done at ${DateTime.now().toIso8601String()}\n');
-    } catch (_) {}
+    if (kDebugMode) {
+      try {
+        File('/storage/emulated/0/Download/widget-stage-3-syncInit.txt')
+            .writeAsStringSync('SyncController.init done at ${DateTime.now().toIso8601String()}\n');
+      } catch (_) {}
+    }
 
     // Listen for OAuth deep-link callbacks (com.peptilog.app://auth/callback).
     // supabase_flutter does not auto-process incoming app links on Android,
@@ -284,10 +278,12 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
 
   @override
   Widget build(BuildContext context) {
-    try {
-      File('/storage/emulated/0/Download/widget-stage-1-appBuild.txt')
-          .writeAsStringSync('PeptilogApp.build at ${DateTime.now().toIso8601String()}\n');
-    } catch (_) {}
+    if (kDebugMode) {
+      try {
+        File('/storage/emulated/0/Download/widget-stage-1-appBuild.txt')
+            .writeAsStringSync('PeptilogApp.build at ${DateTime.now().toIso8601String()}\n');
+      } catch (_) {}
+    }
     final router = ref.watch(appRouterProvider);
     return MaterialApp.router(
       title: AppConstants.appName,

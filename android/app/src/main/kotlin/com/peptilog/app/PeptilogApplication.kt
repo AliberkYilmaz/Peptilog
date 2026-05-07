@@ -12,7 +12,7 @@ class PeptilogApplication : android.app.Application() {
     override fun attachBaseContext(base: Context?) {
         // Stage 1 — must use base directly: super hasn't been called yet so
         // this.contentResolver is null at this point.
-        writeStageMarker("app-stage-1-attachBase.txt", base)
+        if (BuildConfig.DEBUG) writeStageMarker("app-stage-1-attachBase.txt", base)
         super.attachBaseContext(base)
         Thread.setDefaultUncaughtExceptionHandler { _, t ->
             writeCrashFile("UncaughtException (pre-Application.onCreate or ContentProvider)", t)
@@ -20,7 +20,7 @@ class PeptilogApplication : android.app.Application() {
     }
 
     override fun onCreate() {
-        writeStageMarker("app-stage-2-appOnCreate.txt")
+        if (BuildConfig.DEBUG) writeStageMarker("app-stage-2-appOnCreate.txt")
         try {
             super.onCreate()
         } catch (t: Throwable) {

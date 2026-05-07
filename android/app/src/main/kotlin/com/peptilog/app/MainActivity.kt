@@ -11,7 +11,7 @@ import java.io.StringWriter
 
 class MainActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        writeStageMarker("app-stage-3-mainOnCreate.txt")
+        if (BuildConfig.DEBUG) writeStageMarker("app-stage-3-mainOnCreate.txt")
         try {
             super.onCreate(savedInstanceState)
         } catch (t: Throwable) {
