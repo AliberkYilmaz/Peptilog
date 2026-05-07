@@ -8,6 +8,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../dashboard/presentation/providers/dashboard_providers.dart';
 import '../../../injection_log/domain/injection_log.dart';
 import '../../../injection_log/presentation/providers/quick_log_notifier.dart';
+import '../../../peptides/domain/peptide.dart';
 import '../providers/calendar_provider.dart';
 import 'edit_injection_sheet.dart';
 import 'injection_log_tile.dart';
@@ -24,7 +25,7 @@ class DayDetailSheet extends ConsumerWidget {
     final peptideMapAsync = ref.watch(peptideByIdProvider);
     final peptideMap = peptideMapAsync.maybeWhen(
       data: (m) => m,
-      orElse: () => const <int, dynamic>{},
+      orElse: () => const <int, Peptide>{},
     );
 
     final dateLabel = DateFormat('EEEE, MMMM d').format(day);
@@ -160,7 +161,7 @@ class DayDetailSheet extends ConsumerWidget {
   Future<void> _openEditSheet(
     BuildContext context,
     InjectionLog log,
-    dynamic peptide,
+    Peptide? peptide,
   ) {
     return showModalBottomSheet<Object?>(
       context: context,
