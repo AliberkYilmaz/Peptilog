@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../dashboard/presentation/providers/dashboard_providers.dart';
+import '../../../injection_log/presentation/providers/quick_log_notifier.dart';
 import '../providers/calendar_provider.dart';
 import 'injection_log_tile.dart';
 
@@ -102,6 +103,18 @@ class DayDetailSheet extends ConsumerWidget {
                           FilledButton(
                             onPressed: () {
                               Navigator.of(context).pop();
+                              final now = DateTime.now();
+                              ref
+                                  .read(quickLogProvider.notifier)
+                                  .setLoggedAt(
+                                    DateTime(
+                                      day.year,
+                                      day.month,
+                                      day.day,
+                                      now.hour,
+                                      now.minute,
+                                    ),
+                                  );
                               ref.read(selectedTabProvider.notifier).state = 1;
                             },
                             style: FilledButton.styleFrom(

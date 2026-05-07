@@ -75,6 +75,9 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
 
+  # Launcher icon generation
+  flutter_launcher_icons: ^0.14.3
+
   # Code generation
   # isar_generator 3.x requires source_gen <2.0.0; riverpod_generator 2.x requires source_gen ^2.0.0.
   # Resolution: isar_generator is run from tools/isar_codegen/ (separate pub env).
@@ -87,3 +90,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/branding/peptilog-logo-master.png
+  adaptive_icon_background: '#0F0F0F'
+  adaptive_icon_foreground: assets/branding/peptilog-logo-master.png
+  min_sdk_android: 24
