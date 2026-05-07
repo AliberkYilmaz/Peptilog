@@ -1,0 +1,15 @@
+# User Feedback — Peptilog
+
+Gathered issues from real-user testing (Aliberk + Arabella).
+Status legend: 🟡 reported · 🟠 triaged · 🔵 scheduled · 🟢 fixed.
+
+---
+
+## #1 · 🟡 Calendar date tap doesn't pre-fill the Quick Log date
+
+**Reporter:** Aliberk · 2026-05-07
+**Where:** Calendar → tap a past date → Quick Log sheet
+**Symptom:** Tapping a date on the calendar opens Quick Log, but the date/time field defaults to "now" instead of the tapped date. User saves without realizing → injection logged against today instead of the historical date intended.
+**Concrete repro:** Aliberk tapped May 8 (when he started peptides), entered Tirzepatide 2.5mg SubQ ×2, hit save. Both entries got `2026-05-07 02:45/02:46 AM` (today) instead of May 8.
+**Why it matters:** Backfilling old doses is broken. Friction is high — user has to manually re-enter a date they already chose.
+**Suggested fix:** When Quick Log is opened from a calendar tap, pre-fill the date field with the tapped date (default time to current local time, or noon, or last-known time of day for that peptide). Only backfill date — keep time editable.
