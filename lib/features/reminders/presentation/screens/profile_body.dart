@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:peptilog_app/main.dart' show talker;
 
 import '../../../../core/services/export_service.dart';
 import '../../../../core/services/notification_service.dart';
@@ -280,7 +281,8 @@ class ProfileBody extends ConsumerWidget {
         case 'bp':
           await svc.exportBloodPressure();
       }
-    } catch (e) {
+    } catch (e, st) {
+      talker.handle(e, st, 'export.$type');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -390,7 +392,8 @@ class ProfileBody extends ConsumerWidget {
 
       // 4. Reset local auth state
       ref.read(pinVerifiedProvider.notifier).state = false;
-    } catch (e) {
+    } catch (e, st) {
+      talker.handle(e, st, 'deleteAccount');
       if (context.mounted) {
         Navigator.of(context).pop(); // close progress dialog
         ScaffoldMessenger.of(context).showSnackBar(

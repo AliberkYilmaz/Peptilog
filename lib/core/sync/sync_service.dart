@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:isar/isar.dart';
+import 'package:peptilog_app/main.dart' show talker;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/health/domain/blood_pressure_log.dart';
@@ -87,7 +86,7 @@ class SyncService {
         try {
           await fn();
         } catch (e, st) {
-          log('SyncService: $entity sync failed', error: e, stackTrace: st);
+          talker.handle(e, st, 'SyncService: $entity sync failed');
         }
       }
 

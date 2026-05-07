@@ -242,8 +242,8 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
     _deepLinkSub = _appLinks!.uriLinkStream.listen((uri) async {
       try {
         await Supabase.instance.client.auth.getSessionFromUrl(uri);
-      } catch (e) {
-        // Ignore non-auth deep links; auth state stream will not change for these.
+      } catch (e, st) {
+        talker.warning('deep link: ignoring non-auth URI $uri', e, st);
       }
     });
     // Cold-launch: if the app was opened via a deep link, the stream above may
@@ -252,7 +252,9 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
       if (uri != null) {
         try {
           await Supabase.instance.client.auth.getSessionFromUrl(uri);
-        } catch (_) {}
+        } catch (e, st) {
+          talker.warning('deep link initial: ignoring non-auth URI $uri', e, st);
+        }
       }
     });
 
@@ -305,7 +307,7 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
         ),
         child: kDebugMode
             ? Stack(children: [
-                if (child != null) child,
+                ?child,
                 Positioned(
                   right: 8,
                   bottom: 80,

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:peptilog_app/main.dart' show talker;
 
 /// Wraps local_auth to provide biometric availability checks and authentication.
 class BiometricRepository {
@@ -12,7 +13,8 @@ class BiometricRepository {
       final canCheck = await _auth.canCheckBiometrics;
       final isSupported = await _auth.isDeviceSupported();
       return canCheck && isSupported;
-    } catch (_) {
+    } catch (e, st) {
+      talker.warning('biometric.isAvailable failed', e, st);
       return false;
     }
   }
@@ -20,7 +22,8 @@ class BiometricRepository {
   Future<List<BiometricType>> getAvailableBiometrics() async {
     try {
       return await _auth.getAvailableBiometrics();
-    } catch (_) {
+    } catch (e, st) {
+      talker.warning('biometric.getAvailableBiometrics failed', e, st);
       return [];
     }
   }
@@ -35,7 +38,8 @@ class BiometricRepository {
           stickyAuth: true,
         ),
       );
-    } catch (_) {
+    } catch (e, st) {
+      talker.handle(e, st, 'biometric.authenticate');
       return false;
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:peptilog_app/main.dart' show talker;
 
 import '../../../../core/providers/sync_providers.dart';
 import '../../data/auth_providers.dart';
@@ -60,9 +61,10 @@ class AuthNotifier extends Notifier<AsyncValue<void>> {
       state = const AsyncData(null);
     } catch (e, st) {
       if (e.toString().contains('Auth returned no user')) {
-        // OAuth in progress in the browser — wait for the auth state stream.
+        talker.info('OAuth in progress — waiting for auth state stream');
         state = const AsyncData(null);
       } else {
+        talker.handle(e, st, 'signInWithOAuth');
         state = AsyncError(e, st);
       }
     }

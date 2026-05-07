@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:peptilog_app/main.dart' show talker;
 
 import '../../data/biometric_repository.dart';
 import '../../data/pin_repository.dart';
@@ -18,6 +19,7 @@ class PinNotifier extends AsyncNotifier<void> {
       state = const AsyncData(null);
       return true;
     } catch (e, st) {
+      talker.handle(e, st, 'pin.setup');
       state = AsyncError(e, st);
       return false;
     }
@@ -31,6 +33,7 @@ class PinNotifier extends AsyncNotifier<void> {
       state = const AsyncData(null);
       return ok;
     } catch (e, st) {
+      talker.handle(e, st, 'pin.verify');
       state = AsyncError(e, st);
       return false;
     }

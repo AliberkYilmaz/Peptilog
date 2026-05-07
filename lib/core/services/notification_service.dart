@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:peptilog_app/main.dart' show talker;
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -36,8 +37,8 @@ class NotificationService {
     try {
       final tzInfo = await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(tzInfo.identifier));
-    } catch (_) {
-      // Fall back to UTC if detection fails — better than crashing.
+    } catch (e, st) {
+      talker.warning('timezone detection failed, falling back to UTC', e, st);
     }
 
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
