@@ -23,3 +23,13 @@ Status legend: 🟡 reported · 🟠 triaged · 🔵 scheduled · 🟢 fixed.
 **Symptom:** Once an injection is saved, there's no UI to delete it or edit any of its fields (peptide, dose, route, date, time, notes). User is permanently stuck with whatever they entered, including duplicates and wrong-date entries.
 **Why it matters:** Critical. Compounds with #1 — Aliberk's two Tirzepatide entries logged today (May 7) instead of May 8 cannot be removed. Any typo or accidental tap is permanent. Long-term retention killer; competitor reviews flag this as a top complaint elsewhere too.
 **Suggested fix:** From the day detail view, tap a log entry → opens an edit sheet (same form as Quick Log, fields pre-filled). Add a delete action (long-press, swipe, or trash icon in the edit sheet). Confirmation dialog for delete. Soft-delete in Isar so cloud sync can replicate the deletion.
+
+---
+
+## #3 · 🟡 Official Peptilog logo not used as the launcher icon
+
+**Reporter:** Aliberk · 2026-05-07
+**Where:** Android launcher / app drawer
+**Symptom:** App is using the default Flutter launcher icon (`@mipmap/ic_launcher`) instead of the official Peptilog logo. Aliberk uploaded the proper logo to Paperclip already.
+**Scope:** Launcher icon only. Splash screen (animated circle) stays as-is.
+**Suggested fix:** Pull the logo asset from Paperclip, run `flutter_launcher_icons` (or replace mipmap-* PNGs manually) for both Android and iOS, regenerate adaptive icons. Verify on launcher + recent apps screen.
