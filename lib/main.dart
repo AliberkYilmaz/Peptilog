@@ -3,8 +3,10 @@ import 'dart:io';
 
 import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 // path_provider removed from main.dart — writeBreadcrumbs now uses direct sync writes
 // to avoid MethodChannel hang before WidgetsFlutterBinding is initialized.
 // sentry_flutter temporarily removed for crash diagnosis (PEP-78)
@@ -22,6 +24,14 @@ import 'core/sync/sync_controller.dart';
 import 'core/theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 
+/// Global Talker instance — in-app logger + error capture.
+/// Use `talker.info('msg')`, `talker.error('msg', exception, stack)`, etc.
+/// In debug builds the floating debug button (added in PeptilogApp.build) opens
+/// a panel with all logs, errors, HTTP calls. Tap the share icon to export.
+final Talker talker = TalkerFlutter.init(
+  settings: TalkerSettings(useConsoleLogs: kDebugMode),
+);
+
 Future<void> main() async {
   // Stage 4 marker — sync write before anything else so we know Dart main() was entered.
   try {
@@ -36,6 +46,18 @@ Future<void> main() async {
     File('/storage/emulated/0/Download/app-stage-5-bindingReady.txt')
         .writeAsStringSync('binding ready at ${DateTime.now().toIso8601String()}\n');
   } catch (_) {}
+
+  // Pipe FlutterError + PlatformDispatcher errors into Talker so they show in
+  // the in-app debug panel and can be exported via the share button.
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    talker.handle(details.exception, details.stack, 'FlutterError caught');
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    talker.handle(error, stack, 'PlatformDispatcher.onError');
+    return true;
+  };
+  talker.info('Peptilog boot — version 1.0.16+16');
 
   // DIAGNOSTIC: per-stage breadcrumb log + 15s timeouts.
   // writeBreadcrumbs is synchronous and uses a direct path write to avoid
@@ -272,6 +294,39 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      // Wrap every route's child with TalkerWrapper so the floating debug
+      // button overlays on top of the live UI. In release builds the wrapper
+      // is invisible and a no-op (the `enabled` flag controls visibility).
+      builder: (context, child) => TalkerWrapper(
+        talker: talker,
+        options: TalkerWrapperOptions(
+          enableErrorAlerts: kDebugMode,
+          enableExceptionAlerts: kDebugMode,
+        ),
+        child: kDebugMode
+            ? Stack(children: [
+                if (child != null) child,
+                Positioned(
+                  right: 8,
+                  bottom: 80,
+                  child: SafeArea(
+                    child: FloatingActionButton.small(
+                      heroTag: 'talker-debug-fab',
+                      tooltip: 'Open Peptilog debug panel',
+                      backgroundColor: AppTheme.amber,
+                      foregroundColor: Colors.black,
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => TalkerScreen(talker: talker),
+                        ),
+                      ),
+                      child: const Icon(Icons.bug_report_outlined, size: 18),
+                    ),
+                  ),
+                ),
+              ])
+            : (child ?? const SizedBox.shrink()),
+      ),
     );
   }
 }
