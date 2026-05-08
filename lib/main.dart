@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,8 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-// path_provider removed from main.dart — writeBreadcrumbs now uses direct sync writes
-// to avoid MethodChannel hang before WidgetsFlutterBinding is initialized.
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -24,40 +21,20 @@ import 'core/sync/sync_controller.dart';
 import 'core/theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 
-/// Global Talker instance — in-app logger + error capture.
-/// Use `talker.info('msg')`, `talker.error('msg', exception, stack)`, etc.
-/// In debug builds the floating debug button (added in PeptilogApp.build) opens
-/// a panel with all logs, errors, HTTP calls. Tap the share icon to export.
 final Talker talker = TalkerFlutter.init(
   settings: TalkerSettings(useConsoleLogs: kDebugMode),
 );
 
 Future<void> main() async {
-  // Stage 4 marker — sync write before anything else so we know Dart main() was entered.
-  if (kDebugMode) {
-    try {
-      File('/storage/emulated/0/Download/app-stage-4-dartMain.txt')
-          .writeAsStringSync('dart main entered at ${DateTime.now().toIso8601String()}\n');
-    } catch (_) {}
-  }
-
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Stage 5: proves WidgetsFlutterBinding completed (sync path, no plugin needed)
-  if (kDebugMode) {
-    try {
-      File('/storage/emulated/0/Download/app-stage-5-bindingReady.txt')
-          .writeAsStringSync('binding ready at ${DateTime.now().toIso8601String()}\n');
-    } catch (_) {}
-  }
-
-  // Initialize Sentry — DSN injected via --dart-define=SENTRY_DSN=...; empty → silent no-op.
+  // NDK native SDK disabled — it caused a JVM crash on boot (PEP-78).
   await SentryFlutter.init((options) {
     options.dsn = const String.fromEnvironment('SENTRY_DSN');
     options.tracesSampleRate = 1.0;
+    options.autoInitializeNativeSdk = false;
   });
 
-  // Pipe FlutterError + PlatformDispatcher errors into Talker and Sentry.
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
     talker.handle(details.exception, details.stack, 'FlutterError caught');
@@ -68,130 +45,33 @@ Future<void> main() async {
     Sentry.captureException(error, stackTrace: stack);
     return true;
   };
-  talker.info('Peptilog boot — version 1.0.19+19');
+  talker.info('Peptilog boot — version 1.0.20+20');
 
-  // DIAGNOSTIC: per-stage breadcrumb log + 15s timeouts.
-  // writeBreadcrumbs is synchronous and uses a direct path write to avoid
-  // MethodChannel hang — getApplicationDocumentsDirectory() blocks forever when
-  // the platform channel handler isn't bound yet (found in versionCode 8).
-  String stage = 'pre-init';
-  final breadcrumbs = StringBuffer(
-    '=== Peptilog boot ${DateTime.now().toIso8601String()} ===\n',
+  await Firebase.initializeApp();
+
+  await Supabase.initialize(
+    url: AppConstants.supabaseUrl,
+    anonKey: AppConstants.supabaseAnonKey,
+    authOptions: FlutterAuthClientOptions(
+      authFlowType: AuthFlowType.pkce,
+      autoRefreshToken: true,
+    ),
   );
 
-  void writeBreadcrumbs([String suffix = '']) {
-    if (!kDebugMode) return;
-    try {
-      File('/storage/emulated/0/Download/peptilog-boot.txt')
-          .writeAsStringSync('${breadcrumbs.toString()}$suffix');
-    } catch (_) {}
-  }
+  final isar = await IsarDatabase.open();
+  await SeedService(isar).seedPresetsIfNeeded();
+  final notificationLaunchRoute = await NotificationService.initialize();
+  final prefs = await SharedPreferences.getInstance();
 
-  Future<T> step<T>(
-    String name,
-    Future<T> Function() body, {
-    Duration timeout = const Duration(seconds: 15),
-  }) async {
-    stage = name;
-    final t0 = DateTime.now();
-    breadcrumbs.writeln('[${t0.toIso8601String().substring(11, 19)}] STARTED $name');
-    writeBreadcrumbs();
-    try {
-      final result = await body().timeout(
-        timeout,
-        onTimeout: () => throw TimeoutException('$name exceeded $timeout'),
-      );
-      final ms = DateTime.now().difference(t0).inMilliseconds;
-      breadcrumbs.writeln('[${DateTime.now().toIso8601String().substring(11, 19)}] OK $name (${ms}ms)');
-      writeBreadcrumbs();
-      return result;
-    } catch (e) {
-      breadcrumbs.writeln('[${DateTime.now().toIso8601String().substring(11, 19)}] FAILED $name: $e');
-      writeBreadcrumbs();
-      rethrow;
-    }
-  }
-
-  try {
-    await step('Firebase.initializeApp', () => Firebase.initializeApp());
-
-    await step('Supabase.initialize', () => Supabase.initialize(
-      url: AppConstants.supabaseUrl,
-      anonKey: AppConstants.supabaseAnonKey,
-      authOptions: FlutterAuthClientOptions(
-        authFlowType: AuthFlowType.pkce,
-        autoRefreshToken: true,
-      ),
-    ));
-
-    final isar = await step('IsarDatabase.open', () => IsarDatabase.open());
-
-    await step('SeedService.seedPresetsIfNeeded',
-        () => SeedService(isar).seedPresetsIfNeeded());
-
-    final notificationLaunchRoute = await step(
-        'NotificationService.initialize', () => NotificationService.initialize());
-
-    final prefs = await step(
-        'SharedPreferences.getInstance', () => SharedPreferences.getInstance());
-
-    breadcrumbs.writeln('[${DateTime.now().toIso8601String().substring(11, 19)}] runApp');
-    writeBreadcrumbs();
-
-    runApp(
-      ProviderScope(
-        overrides: [
-          isarProvider.overrideWithValue(isar),
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
-        child: PeptilogApp(notificationLaunchRoute: notificationLaunchRoute),
-      ),
-    );
-  } catch (e, st) {
-    breadcrumbs.writeln('FATAL $stage: $e\n$st');
-    writeBreadcrumbs();
-    runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.black,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'PEPTILOG BOOT FAILURE',
-                    style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'STAGE: $stage',
-                    style: const TextStyle(
-                        color: Colors.amber,
-                        fontSize: 14,
-                        fontFamily: 'monospace'),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    '$e\n$st',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'monospace',
-                        fontSize: 11),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    ));
-  }
+  runApp(
+    ProviderScope(
+      overrides: [
+        isarProvider.overrideWithValue(isar),
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+      child: PeptilogApp(notificationLaunchRoute: notificationLaunchRoute),
+    ),
+  );
 }
 
 class PeptilogApp extends ConsumerStatefulWidget {
@@ -213,25 +93,9 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
   @override
   void initState() {
     super.initState();
-    if (kDebugMode) {
-      try {
-        File('/storage/emulated/0/Download/widget-stage-2-initState.txt')
-            .writeAsStringSync('initState entered at ${DateTime.now().toIso8601String()}\n');
-      } catch (_) {}
-    }
     _syncController = ref.read(syncControllerProvider);
     _syncController.init();
-    if (kDebugMode) {
-      try {
-        File('/storage/emulated/0/Download/widget-stage-3-syncInit.txt')
-            .writeAsStringSync('SyncController.init done at ${DateTime.now().toIso8601String()}\n');
-      } catch (_) {}
-    }
 
-    // Listen for OAuth deep-link callbacks (com.peptilog.app://auth/callback).
-    // supabase_flutter does not auto-process incoming app links on Android,
-    // so we forward them to the auth client which exchanges the PKCE code
-    // for a session and then emits via onAuthStateChange.
     _appLinks = AppLinks();
     _deepLinkSub = _appLinks!.uriLinkStream.listen((uri) async {
       try {
@@ -240,8 +104,6 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
         talker.warning('deep link: ignoring non-auth URI $uri', e, st);
       }
     });
-    // Cold-launch: if the app was opened via a deep link, the stream above may
-    // not fire. Pull the initial link explicitly.
     _appLinks!.getInitialLink().then((uri) async {
       if (uri != null) {
         try {
@@ -252,14 +114,11 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
       }
     });
 
-    // Navigate to the payload route when a notification is tapped.
     _notifTapSub = NotificationService.tapRoute.listen((route) {
       final router = ref.read(appRouterProvider);
       router.go(route);
     });
 
-    // If the app was cold-launched by a notification tap, navigate once the
-    // router is ready (after the first frame so the redirect logic can run).
     if (widget.notificationLaunchRoute != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final router = ref.read(appRouterProvider);
@@ -278,12 +137,6 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
 
   @override
   Widget build(BuildContext context) {
-    if (kDebugMode) {
-      try {
-        File('/storage/emulated/0/Download/widget-stage-1-appBuild.txt')
-            .writeAsStringSync('PeptilogApp.build at ${DateTime.now().toIso8601String()}\n');
-      } catch (_) {}
-    }
     final router = ref.watch(appRouterProvider);
     return MaterialApp.router(
       title: AppConstants.appName,
@@ -292,9 +145,6 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      // Wrap every route's child with TalkerWrapper so the floating debug
-      // button overlays on top of the live UI. In release builds the wrapper
-      // is invisible and a no-op (the `enabled` flag controls visibility).
       builder: (context, child) => TalkerWrapper(
         talker: talker,
         options: TalkerWrapperOptions(
@@ -303,7 +153,7 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
         ),
         child: kDebugMode
             ? Stack(children: [
-                ?child,
+                child!,
                 Positioned(
                   right: 8,
                   bottom: 80,
@@ -314,8 +164,6 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
                         backgroundColor: AppTheme.amber,
                         foregroundColor: Colors.black,
                         onPressed: () {
-                          // Use the router's navigator (the builder's context is
-                          // above the Navigator and has none of its own).
                           final r = ref.read(appRouterProvider);
                           r.routerDelegate.navigatorKey.currentState?.push(
                             MaterialPageRoute<void>(
