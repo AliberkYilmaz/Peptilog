@@ -155,10 +155,14 @@ class SyncService {
 
   Future<void> syncPeptides(String userId) async {
     final lastSync = _lastSyncAt;
-    final dirty = await _isar.peptides.filter().isDirtyEqualTo(true).findAll();
+    final allDirty =
+        await _isar.peptides.filter().isDirtyEqualTo(true).findAll();
+    // Preset peptides are seed data with userId=null — RLS rejects them.
+    final dirty = allDirty.where((p) => p.isCustom).toList();
+    final presets = allDirty.where((p) => !p.isCustom).toList();
     await _peptideRepo.pushDirty(dirty);
     final remote = await _peptideRepo.pullSince(lastSync, userId);
-    await _mergePeptides(dirty, remote);
+    await _mergePeptides(dirty, remote, presets);
   }
 
   Future<void> syncWeightLogs(String userId) async {
@@ -232,10 +236,16 @@ class SyncService {
 
   Future<void> _mergePeptides(
     List<Peptide> pushed,
-    List<Peptide> remote,
-  ) async {
+    List<Peptide> remote, [
+    List<Peptide> presets = const [],
+  ]) async {
     await _isar.writeTxn(() async {
       for (final r in pushed) {
+        r.isDirty = false;
+        await _isar.peptides.put(r);
+      }
+      // Clear dirty flag on presets without pushing — they never sync.
+      for (final r in presets) {
         r.isDirty = false;
         await _isar.peptides.put(r);
       }
