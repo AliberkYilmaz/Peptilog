@@ -89,6 +89,10 @@ class QuickLogNotifier extends AutoDisposeNotifier<QuickLogState> {
 
   /// Validates inputs, writes [InjectionLog] to Isar, and marks saved.
   Future<void> save() async {
+    if (state.loggedAt.isAfter(DateTime.now())) {
+      state = state.copyWith(errorMessage: 'futureDate');
+      return;
+    }
     if (state.selectedPeptide == null) {
       state = state.copyWith(errorMessage: 'selectPeptide');
       return;

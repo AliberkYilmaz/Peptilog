@@ -109,17 +109,18 @@ class DayDetailSheet extends ConsumerWidget {
                             onPressed: () {
                               Navigator.of(context).pop();
                               final now = DateTime.now();
+                              final selected = DateTime(
+                                day.year,
+                                day.month,
+                                day.day,
+                                now.hour,
+                                now.minute,
+                              );
+                              final clamped =
+                                  selected.isAfter(now) ? now : selected;
                               ref
                                   .read(quickLogProvider.notifier)
-                                  .setLoggedAt(
-                                    DateTime(
-                                      day.year,
-                                      day.month,
-                                      day.day,
-                                      now.hour,
-                                      now.minute,
-                                    ),
-                                  );
+                                  .setLoggedAt(clamped);
                               ref.read(selectedTabProvider.notifier).state = 1;
                             },
                             style: FilledButton.styleFrom(

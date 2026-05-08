@@ -106,6 +106,12 @@ class _QuickLogBodyState extends ConsumerState<QuickLogBody> {
             loggedAt: state.loggedAt,
             onEdit: (dt) => notifier.setLoggedAt(dt),
           ),
+          if (state.errorMessage == 'futureDate') ...[
+            const SizedBox(height: 6),
+            InjectionErrorText(
+              'Logs are for past injections. Use Reminders to schedule ahead.',
+            ),
+          ],
 
           const SizedBox(height: 36),
           _SaveButton(

@@ -99,6 +99,24 @@ ProviderContainer _makeContainer({
 
 void main() {
   group('QuickLogNotifier — validation', () {
+    test('save() sets errorMessage to futureDate when loggedAt is in the future',
+        () async {
+      final container = _makeContainer();
+      addTearDown(container.dispose);
+
+      final notifier = container.read(quickLogProvider.notifier);
+      notifier.selectPeptide(_makePeptide());
+      notifier.setDose('0.5');
+      notifier.setLoggedAt(DateTime.now().add(const Duration(hours: 1)));
+
+      await notifier.save();
+
+      final state = container.read(quickLogProvider);
+      expect(state.errorMessage, 'futureDate');
+      expect(state.saved, isFalse);
+      expect(state.isSaving, isFalse);
+    });
+
     test('save() with no peptide sets errorMessage to selectPeptide', () async {
       final container = _makeContainer();
       addTearDown(container.dispose);
