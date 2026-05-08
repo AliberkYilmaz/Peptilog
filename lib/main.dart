@@ -45,7 +45,7 @@ Future<void> main() async {
     Sentry.captureException(error, stackTrace: stack);
     return true;
   };
-  talker.info('Peptilog boot — version 1.0.20+20');
+  talker.info('Peptilog boot — version 1.0.21+21');
 
   await Firebase.initializeApp();
 
@@ -151,33 +151,7 @@ class _PeptilogAppState extends ConsumerState<PeptilogApp> {
           enableErrorAlerts: kDebugMode,
           enableExceptionAlerts: kDebugMode,
         ),
-        child: kDebugMode
-            ? Stack(children: [
-                child!,
-                Positioned(
-                  right: 8,
-                  bottom: 80,
-                  child: SafeArea(
-                    child: Builder(
-                      builder: (innerContext) => FloatingActionButton.small(
-                        heroTag: 'talker-debug-fab',
-                        backgroundColor: AppTheme.amber,
-                        foregroundColor: Colors.black,
-                        onPressed: () {
-                          final r = ref.read(appRouterProvider);
-                          r.routerDelegate.navigatorKey.currentState?.push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => TalkerScreen(talker: talker),
-                            ),
-                          );
-                        },
-                        child: const Icon(Icons.bug_report_outlined, size: 18),
-                      ),
-                    ),
-                  ),
-                ),
-              ])
-            : (child ?? const SizedBox.shrink()),
+        child: child ?? const SizedBox.shrink(),
       ),
     );
   }

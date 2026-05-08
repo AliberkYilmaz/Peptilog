@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:peptilog_app/main.dart' show talker;
+import 'package:talker_flutter/talker_flutter.dart';
 
 import '../../../../core/services/export_service.dart';
 import '../../../../core/services/notification_service.dart';
@@ -37,7 +40,7 @@ const _dayAbbr = {
 
 final _appVersionProvider = FutureProvider<String>((ref) async {
   final info = await PackageInfo.fromPlatform();
-  return '${info.version} (${info.buildNumber})';
+  return info.version;
 });
 
 final _biometricAvailableProvider = FutureProvider<bool>(
@@ -207,11 +210,7 @@ class ProfileBody extends ConsumerWidget {
         // ── About ───────────────────────────────────────────────────────────
         _SectionHeader('About'),
         const SizedBox(height: 8),
-        _InfoTile(
-          icon: Icons.info_outline,
-          label: 'Version',
-          subtitle: appVersionAsync.valueOrNull ?? '…',
-        ),
+        _VersionTile(version: appVersionAsync.valueOrNull ?? '…'),
         const SizedBox(height: 8),
         const _InfoTile(
           icon: Icons.medical_services_outlined,
@@ -480,6 +479,73 @@ class _InfoTile extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Version tile (7-tap to open Talker)
+// ---------------------------------------------------------------------------
+
+class _VersionTile extends StatefulWidget {
+  const _VersionTile({required this.version});
+  final String version;
+
+  @override
+  State<_VersionTile> createState() => _VersionTileState();
+}
+
+class _VersionTileState extends State<_VersionTile> {
+  int _tapCount = 0;
+  Timer? _resetTimer;
+
+  static const _requiredTaps = 7;
+  static const _hintStartAt = 4;
+
+  @override
+  void dispose() {
+    _resetTimer?.cancel();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    _resetTimer?.cancel();
+    _tapCount++;
+
+    if (_tapCount >= _requiredTaps) {
+      _tapCount = 0;
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => TalkerScreen(talker: talker),
+        ),
+      );
+      return;
+    }
+
+    if (_tapCount >= _hintStartAt) {
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text(
+            'Debug mode in ${_requiredTaps - _tapCount} taps',
+          ),
+          duration: const Duration(seconds: 1),
+          behavior: SnackBarBehavior.floating,
+        ));
+    }
+
+    _resetTimer = Timer(const Duration(seconds: 3), () => _tapCount = 0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _handleTap,
+      child: _InfoTile(
+        icon: Icons.info_outline,
+        label: 'Version',
+        subtitle: widget.version,
       ),
     );
   }
